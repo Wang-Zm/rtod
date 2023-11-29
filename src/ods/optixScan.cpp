@@ -1118,7 +1118,7 @@ int main(int argc, char *argv[])
     
     size_t optix_context_used;
     stop_gpu_mem(&start_gpu_memory, &optix_context_used);
-    std::cout << "[Mem] Optix context used(MB): " << 1.0 * optix_context_used / (1 << 20) << std::endl;
+    // std::cout << "[Mem] Optix context used(MB): " << 1.0 * optix_context_used / (1 << 20) << std::endl;
     start_gpu_mem(&start_gpu_memory);
 
     data_h2d(state);

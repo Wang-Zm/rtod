@@ -17,7 +17,6 @@ Your GPU must support NVIDIA RTX (hardware raytracing acceleration). For consume
 - Example output for STK dataset under default parameters with two techniques
     ```
     DIM[0]: 0, 9930
-    [Mem] Optix context used(MB): 24
     [Mem] data_h2d: 4
     [Mem-make_gas] kGenAABB: 4
     [Mem-make_gas] d_temp_buffer_gas: 8

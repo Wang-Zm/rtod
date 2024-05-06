@@ -3,7 +3,7 @@ import os
 import sys, getopt
 import numpy as np
 
-data_dir = '/home/wzm/rtod/data/'
+data_dir = '/home/wzm/Code/rtod/data/'
 ugt_dict = {0:'update', 1:'rebuild'}
 # build_type = 'Debug'
 build_type = 'Release'
@@ -222,25 +222,42 @@ def stk_1d_vary_ray_load(compaction = 0, update_gas_type = 1):
         os.system(cmd)
 
 
+def stk_1d_vary_ray_num(compaction = 0, update_gas_type = 1):
+    logtime = time.strftime("%y%m%d-%H%M%S")
+    output_file = f"log/{ugt_dict[update_gas_type]}/fast_build/vary_ray_num/{logtime}-STK-vary_ray_num.log"
+    # ray_num_lis = [1000, 10000, 100000, 1000000, 3000000] # 400,000是从一个点上发射4条光线
+    ray_num_lis = [1000]
+    
+    for ray_num in ray_num_lis:
+        args = f'--n 1048572 --R 0.45 --K 50 --window 100000 --slide 5000 --launch_ray_num {ray_num}'
+        cmd = f"./build/bin/optixScan {args} -f {data_dir}stock.txt >> {output_file}"
+        print(cmd)
+        os.system(f'cd build/ && cmake ../src/ -D DIMENSION=1 \
+                    -D COMPACTION={compaction} -D UPDATE_GAS_TYPE={update_gas_type} \
+                    -D CMAKE_BUILD_TYPE={build_type} -D OPTIMIZATION=0 && \
+                    make')
+        os.system(cmd)
+
+
 compaction = 0
 update_gas_type = 1
 
-stk_1d_vary_ray_load() # Figure 8: [Time] detect outlier in log <-> ray traversal
+# stk_1d_vary_ray_load() # Figure 8: [Time] detect outlier in log <-> ray traversal
+stk_1d_vary_ray_num()
+
+# gau_1d(compaction, update_gas_type, 0) # Figure 15
+# stk_1d(compaction, update_gas_type, 0) # Figure 15
+# tao_3d(compaction, update_gas_type, 0) # Figure 15
+
+# gau_1d(compaction, update_gas_type, 1) # Figure 15
+# stk_1d(compaction, update_gas_type, 1) # Figure 15
+# tao_3d(compaction, update_gas_type, 1) # Figure 15
+
+# gau_1d(compaction, update_gas_type, 2) # Figure 9, 10, 15, 16
+# stk_1d(compaction, update_gas_type, 2) # Figure 9, 10, 15, 16
+# tao_3d(compaction, update_gas_type, 2) # Figure 9, 10, 15, 16
 
 
-gau_1d(compaction, update_gas_type, 0) # Figure 15
-stk_1d(compaction, update_gas_type, 0) # Figure 15
-tao_3d(compaction, update_gas_type, 0) # Figure 15
-
-gau_1d(compaction, update_gas_type, 1) # Figure 15
-stk_1d(compaction, update_gas_type, 1) # Figure 15
-tao_3d(compaction, update_gas_type, 1) # Figure 15
-
-gau_1d(compaction, update_gas_type, 2) # Figure 9, 10, 15, 16
-stk_1d(compaction, update_gas_type, 2) # Figure 9, 10, 15, 16
-tao_3d(compaction, update_gas_type, 2) # Figure 9, 10, 15, 16
-
-
-gau_1d_vary_parameters() # Figure 11, 12, 13, 14
-stk_1d_vary_parameters() # Figure 11, 12, 13, 14
-tao_3d_vary_parameters() # Figure 11, 12, 13, 14
+# gau_1d_vary_parameters(True, False, False, False) # Figure 11, 12, 13, 14
+# stk_1d_vary_parameters(True, False, False, False) # Figure 11, 12, 13, 14
+# tao_3d_vary_parameters(True, False, False, False) # Figure 11, 12, 13, 14

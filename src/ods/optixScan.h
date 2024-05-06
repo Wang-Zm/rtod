@@ -47,6 +47,7 @@ struct Params
     double3*                ray_origin_list;
     int                     ray_origin_num;
     double                  R2;
+    int                     window_size;
 };
 
 

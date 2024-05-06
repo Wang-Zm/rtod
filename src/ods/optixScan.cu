@@ -26,21 +26,25 @@ extern "C" __global__ void __raygen__rg() {
     // Map our launch idx to a screen location and create a ray from the camera
     // location through the screen 
     float3 ray_origin, ray_direction;
-#if OPTIMIZATION == 0 || OPTIMIZATION == 2
-    ray_origin    = { float(params.points[idx.x].x), 
-                      float(params.points[idx.x].y),
-                      float(params.points[idx.x].z) };
-#else
+#if OPTIMIZATION == 0
+    ray_origin    = { float(params.points[idx.x % params.window_size].x), 
+                      float(params.points[idx.x % params.window_size].y),
+                      float(params.points[idx.x % params.window_size].z) };
+#elif OPTIMIZATION == 1
     ray_origin    = { float(params.ray_origin_list[idx.x].x),
                       float(params.ray_origin_list[idx.x].y),
                       float(params.ray_origin_list[idx.x].z) };
+#else
+    ray_origin    = { float(params.points[idx.x].x), 
+                      float(params.points[idx.x].y),
+                      float(params.points[idx.x].z) };
 #endif
     ray_direction = { 1, 0, 0 };
 
     // Trace the ray against our scene hierarchy
     unsigned int intersection_test_num = 0;
     unsigned int hit_num = 0;
-    unsigned int ray_idx = idx.x;
+    unsigned int ray_idx = idx.x % params.window_size;
     optixTrace(
             params.handle,
             ray_origin,

@@ -713,6 +713,7 @@ void initialize_params(ScanState &state) {
     state.params.R  = state.R;
     state.params.R2 = state.R * state.R;
     state.params.K  = state.K;
+    state.params.window_size = state.window;
     state.params.handle = state.gas_handle;
     state.params.tmin   = 0.0f;
     state.params.tmax   = FLT_MIN;

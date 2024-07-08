@@ -289,6 +289,373 @@ def time_distribution():
                   colors=["lightgreen", 'xkcd:jade', 'dodgerblue', 'gold', ],
                   )
 
+def overall_time():
+    record_x_name = ["GAU", "STK", "TAO"]
+    record_labels = ["MCOD", "NETS", "MDUAL", "RTOD"]
+    total_time = [ # TODO: need to update
+        [4.85205, 8.16504, 8.74194, 8.85693, 8.23193, 7.42896,
+            8.24683, 8.76611, 8.78198, 8.29688, 5.50781],
+        [1.0570055, 34.0240475, 39.8050565, 48.2344985, 57.9149165, 64.6802975,
+            73.1829845, 84.3575435, 96.3670655, 110.3013905, 124.8011495],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+    ]
+    common_draw(total_time, record_labels, None, (0.5, 0.5 + len(record_x_name)),
+                record_x_name, "pic/highlight-results-mem-86.pdf",
+                colors=["#e64b35", "xkcd:jade", "dodgerblue"],
+                colorOffset=0,
+                x_axis_name='Dataset',
+                y_axis_name='Time (ms)',
+                y_log=True,
+                legendsize=26,
+                common_font_size=26,
+                columnspacing=0.8,
+                lengent_ncol=1,
+                ymax=140)
+
+def overall_memory():
+    record_x_name = ["GAU", "STK", "TAO"]
+    record_labels = ["MCOD", "NETS", "MDUAL", "RTOD"]
+    mem = [ # TODO: need to update
+        [4.85205, 8.16504, 8.74194, 8.85693, 8.23193, 7.42896,
+            8.24683, 8.76611, 8.78198, 8.29688, 5.50781],
+        [1.0570055, 34.0240475, 39.8050565, 48.2344985, 57.9149165, 64.6802975,
+            73.1829845, 84.3575435, 96.3670655, 110.3013905, 124.8011495],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+    ]
+    common_draw(mem, record_labels, None, (0.5, 0.5 + len(record_x_name)),
+                record_x_name, "pic/highlight-results-time-86.pdf",
+                colors=["#e64b35", "xkcd:jade", "dodgerblue"],
+                colorOffset=0,
+                x_axis_name='Dataset',
+                y_axis_name='Memory (MB)',
+                y_log=True,
+                legendsize=26,
+                common_font_size=26,
+                columnspacing=0.8,
+                lengent_ncol=1,
+                ymax=140)
+
+def vary_window_size():
+    # GAU
+    record_x_name = ["10k", "50k", "100k", "150k", "200k"]
+    record_labels = ["MCOD", "NETS", "MDUAL", "RTOD"]
+    total_time = [ # TODO: need to update
+        [4.85205, 8.16504, 8.74194, 8.85693, 8.23193, 7.42896,
+            8.24683, 8.76611, 8.78198, 8.29688, 5.50781],
+        [1.0570055, 34.0240475, 39.8050565, 48.2344985, 57.9149165, 64.6802975,
+            73.1829845, 84.3575435, 96.3670655, 110.3013905, 124.8011495],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+    ]
+    common_draw(total_time, record_labels, None, (0.5, 0.5 + len(record_x_name)),
+                record_x_name, "pic/varying-window-GAU.pdf",
+                colors=["#e64b35", "xkcd:jade", "dodgerblue"],
+                colorOffset=0,
+                x_axis_name='Window Size',
+                y_axis_name='Time (ms)',
+                y_log=True,
+                legendsize=26,
+                common_font_size=26,
+                columnspacing=0.8,
+                lengent_ncol=1,
+                ymax=140)
+
+    # STK
+    record_x_name = ["10k", "50k", "100k", "150k", "200k"]
+    record_labels = ["MCOD", "NETS", "MDUAL", "RTOD"]
+    total_time = [ # TODO: need to update
+        [4.85205, 8.16504, 8.74194, 8.85693, 8.23193, 7.42896,
+            8.24683, 8.76611, 8.78198, 8.29688, 5.50781],
+        [1.0570055, 34.0240475, 39.8050565, 48.2344985, 57.9149165, 64.6802975,
+            73.1829845, 84.3575435, 96.3670655, 110.3013905, 124.8011495],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+    ]
+    common_draw(total_time, record_labels, None, (0.5, 0.5 + len(record_x_name)),
+                record_x_name, "pic/varying-window-STK.pdf",
+                colors=["#e64b35", "xkcd:jade", "dodgerblue"],
+                colorOffset=0,
+                x_axis_name='Window Size',
+                y_axis_name='Time (ms)',
+                y_log=True,
+                legendsize=26,
+                common_font_size=26,
+                columnspacing=0.8,
+                lengent_ncol=1,
+                ymax=140)
+
+    # TAO
+    record_x_name = ["1k", "5k", "10k", "15k", "20k"]
+    record_labels = ["MCOD", "NETS", "MDUAL", "RTOD"]
+    total_time = [ # TODO: need to update
+        [4.85205, 8.16504, 8.74194, 8.85693, 8.23193, 7.42896,
+            8.24683, 8.76611, 8.78198, 8.29688, 5.50781],
+        [1.0570055, 34.0240475, 39.8050565, 48.2344985, 57.9149165, 64.6802975,
+            73.1829845, 84.3575435, 96.3670655, 110.3013905, 124.8011495],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+    ]
+    common_draw(total_time, record_labels, None, (0.5, 0.5 + len(record_x_name)),
+                record_x_name, "pic/varying-window-TAO.pdf",
+                colors=["#e64b35", "xkcd:jade", "dodgerblue"],
+                colorOffset=0,
+                x_axis_name='Window Size',
+                y_axis_name='Time (ms)',
+                y_log=True,
+                legendsize=26,
+                common_font_size=26,
+                columnspacing=0.8,
+                lengent_ncol=1,
+                ymax=140)
+
+def vary_slide_size():
+    # GAU
+    record_x_name = ["5%", "10%", "20%", "50%", "100%"]
+    record_labels = ["MCOD", "NETS", "MDUAL", "RTOD"]
+    total_time = [ # TODO: need to update
+        [4.85205, 8.16504, 8.74194, 8.85693, 8.23193, 7.42896,
+            8.24683, 8.76611, 8.78198, 8.29688, 5.50781],
+        [1.0570055, 34.0240475, 39.8050565, 48.2344985, 57.9149165, 64.6802975,
+            73.1829845, 84.3575435, 96.3670655, 110.3013905, 124.8011495],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+    ]
+    common_draw(total_time, record_labels, None, (0.5, 0.5 + len(record_x_name)),
+                record_x_name, "pic/varying-slide-GAU.pdf",
+                colors=["#e64b35", "xkcd:jade", "dodgerblue"],
+                colorOffset=0,
+                x_axis_name='Slide Size/Window Size',
+                y_axis_name='Time (ms)',
+                y_log=True,
+                legendsize=26,
+                common_font_size=26,
+                columnspacing=0.8,
+                lengent_ncol=1,
+                ymax=140)
+
+    # STK
+    record_x_name = ["5%", "10%", "20%", "50%", "100%"]
+    record_labels = ["MCOD", "NETS", "MDUAL", "RTOD"]
+    total_time = [ # TODO: need to update
+        [4.85205, 8.16504, 8.74194, 8.85693, 8.23193, 7.42896,
+            8.24683, 8.76611, 8.78198, 8.29688, 5.50781],
+        [1.0570055, 34.0240475, 39.8050565, 48.2344985, 57.9149165, 64.6802975,
+            73.1829845, 84.3575435, 96.3670655, 110.3013905, 124.8011495],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+    ]
+    common_draw(total_time, record_labels, None, (0.5, 0.5 + len(record_x_name)),
+                record_x_name, "pic/varying-slide-STK.pdf",
+                colors=["#e64b35", "xkcd:jade", "dodgerblue"],
+                colorOffset=0,
+                x_axis_name='Slide Size/Window Size',
+                y_axis_name='Time (ms)',
+                y_log=True,
+                legendsize=26,
+                common_font_size=26,
+                columnspacing=0.8,
+                lengent_ncol=1,
+                ymax=140)
+
+    # TAO
+    record_x_name = ["5%", "10%", "20%", "50%", "100%"]
+    record_labels = ["MCOD", "NETS", "MDUAL", "RTOD"]
+    total_time = [ # TODO: need to update
+        [4.85205, 8.16504, 8.74194, 8.85693, 8.23193, 7.42896,
+            8.24683, 8.76611, 8.78198, 8.29688, 5.50781],
+        [1.0570055, 34.0240475, 39.8050565, 48.2344985, 57.9149165, 64.6802975,
+            73.1829845, 84.3575435, 96.3670655, 110.3013905, 124.8011495],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+    ]
+    common_draw(total_time, record_labels, None, (0.5, 0.5 + len(record_x_name)),
+                record_x_name, "pic/varying-slide-TAO.pdf",
+                colors=["#e64b35", "xkcd:jade", "dodgerblue"],
+                colorOffset=0,
+                x_axis_name='Slide Size/Window Size',
+                y_axis_name='Time (ms)',
+                y_log=True,
+                legendsize=26,
+                common_font_size=26,
+                columnspacing=0.8,
+                lengent_ncol=1,
+                ymax=140)
+
+def vary_R():
+    # GAU
+    record_x_name = ["25%", "50%", "100%", "500%", "1000%"]
+    record_labels = ["MCOD", "NETS", "MDUAL", "RTOD"]
+    total_time = [ # TODO: need to update
+        [4.85205, 8.16504, 8.74194, 8.85693, 8.23193, 7.42896,
+            8.24683, 8.76611, 8.78198, 8.29688, 5.50781],
+        [1.0570055, 34.0240475, 39.8050565, 48.2344985, 57.9149165, 64.6802975,
+            73.1829845, 84.3575435, 96.3670655, 110.3013905, 124.8011495],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+    ]
+    common_draw(total_time, record_labels, None, (0.5, 0.5 + len(record_x_name)),
+                record_x_name, "pic/varying-R-GAU.pdf",
+                colors=["#e64b35", "xkcd:jade", "dodgerblue"],
+                colorOffset=0,
+                x_axis_name='Distance Threshold',
+                y_axis_name='Time (ms)',
+                y_log=True,
+                legendsize=26,
+                common_font_size=26,
+                columnspacing=0.8,
+                lengent_ncol=1,
+                ymax=140)
+
+    # STK
+    record_x_name = ["25%", "50%", "100%", "500%", "1000%"]
+    record_labels = ["MCOD", "NETS", "MDUAL", "RTOD"]
+    total_time = [ # TODO: need to update
+        [4.85205, 8.16504, 8.74194, 8.85693, 8.23193, 7.42896,
+            8.24683, 8.76611, 8.78198, 8.29688, 5.50781],
+        [1.0570055, 34.0240475, 39.8050565, 48.2344985, 57.9149165, 64.6802975,
+            73.1829845, 84.3575435, 96.3670655, 110.3013905, 124.8011495],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+    ]
+    common_draw(total_time, record_labels, None, (0.5, 0.5 + len(record_x_name)),
+                record_x_name, "pic/varying-R-STK.pdf",
+                colors=["#e64b35", "xkcd:jade", "dodgerblue"],
+                colorOffset=0,
+                x_axis_name='Distance Threshold',
+                y_axis_name='Time (ms)',
+                y_log=True,
+                legendsize=26,
+                common_font_size=26,
+                columnspacing=0.8,
+                lengent_ncol=1,
+                ymax=140)
+
+    # TAO
+    record_x_name = ["25%", "50%", "100%", "500%", "1000%"]
+    record_labels = ["MCOD", "NETS", "MDUAL", "RTOD"]
+    total_time = [ # TODO: need to update
+        [4.85205, 8.16504, 8.74194, 8.85693, 8.23193, 7.42896,
+            8.24683, 8.76611, 8.78198, 8.29688, 5.50781],
+        [1.0570055, 34.0240475, 39.8050565, 48.2344985, 57.9149165, 64.6802975,
+            73.1829845, 84.3575435, 96.3670655, 110.3013905, 124.8011495],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+    ]
+    common_draw(total_time, record_labels, None, (0.5, 0.5 + len(record_x_name)),
+                record_x_name, "pic/varying-R-TAO.pdf",
+                colors=["#e64b35", "xkcd:jade", "dodgerblue"],
+                colorOffset=0,
+                x_axis_name='Distance Threshold',
+                y_axis_name='Time (ms)',
+                y_log=True,
+                legendsize=26,
+                common_font_size=26,
+                columnspacing=0.8,
+                lengent_ncol=1,
+                ymax=140)
+
+def vary_K():
+    # GAU
+    record_x_name = ["10", "30", "50", "70", "100"]
+    record_labels = ["MCOD", "NETS", "MDUAL", "RTOD"]
+    total_time = [ # TODO: need to update
+        [4.85205, 8.16504, 8.74194, 8.85693, 8.23193, 7.42896,
+            8.24683, 8.76611, 8.78198, 8.29688, 5.50781],
+        [1.0570055, 34.0240475, 39.8050565, 48.2344985, 57.9149165, 64.6802975,
+            73.1829845, 84.3575435, 96.3670655, 110.3013905, 124.8011495],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+    ]
+    common_draw(total_time, record_labels, None, (0.5, 0.5 + len(record_x_name)),
+                record_x_name, "pic/varying-K-GAU.pdf",
+                colors=["#e64b35", "xkcd:jade", "dodgerblue"],
+                colorOffset=0,
+                x_axis_name='Neighbor Threshold',
+                y_axis_name='Time (ms)',
+                y_log=True,
+                legendsize=26,
+                common_font_size=26,
+                columnspacing=0.8,
+                lengent_ncol=1,
+                ymax=140)
+
+    # STK
+    record_x_name = ["10", "30", "50", "70", "100"]
+    record_labels = ["MCOD", "NETS", "MDUAL", "RTOD"]
+    total_time = [ # TODO: need to update
+        [4.85205, 8.16504, 8.74194, 8.85693, 8.23193, 7.42896,
+            8.24683, 8.76611, 8.78198, 8.29688, 5.50781],
+        [1.0570055, 34.0240475, 39.8050565, 48.2344985, 57.9149165, 64.6802975,
+            73.1829845, 84.3575435, 96.3670655, 110.3013905, 124.8011495],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+    ]
+    common_draw(total_time, record_labels, None, (0.5, 0.5 + len(record_x_name)),
+                record_x_name, "pic/varying-K-STK.pdf",
+                colors=["#e64b35", "xkcd:jade", "dodgerblue"],
+                colorOffset=0,
+                x_axis_name='Neighbor Threshold',
+                y_axis_name='Time (ms)',
+                y_log=True,
+                legendsize=26,
+                common_font_size=26,
+                columnspacing=0.8,
+                lengent_ncol=1,
+                ymax=140)
+
+    # TAO
+    record_x_name = ["10", "30", "50", "70", "100"]
+    record_labels = ["MCOD", "NETS", "MDUAL", "RTOD"]
+    total_time = [ # TODO: need to update
+        [4.85205, 8.16504, 8.74194, 8.85693, 8.23193, 7.42896,
+            8.24683, 8.76611, 8.78198, 8.29688, 5.50781],
+        [1.0570055, 34.0240475, 39.8050565, 48.2344985, 57.9149165, 64.6802975,
+            73.1829845, 84.3575435, 96.3670655, 110.3013905, 124.8011495],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+        [1.017, 1.372, 1.857, 3.103, 5.456, 10.511,
+            17.403, 26.913, 39.885, 59.204, 77.453],
+    ]
+    common_draw(total_time, record_labels, None, (0.5, 0.5 + len(record_x_name)),
+                record_x_name, "pic/varying-K-TAO.pdf",
+                colors=["#e64b35", "xkcd:jade", "dodgerblue"],
+                colorOffset=0,
+                x_axis_name='Neighbor Threshold',
+                y_axis_name='Time (ms)',
+                y_log=True,
+                legendsize=26,
+                common_font_size=26,
+                columnspacing=0.8,
+                lengent_ncol=1,
+                ymax=140)
 
 # draw_vary_ray_num()
 time_distribution()

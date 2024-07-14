@@ -848,16 +848,36 @@ void check_outlier(int *outlier_list, int outlier_num, double3 *vertices_window,
     // check the result
     if (check_outlier_num != outlier_num) {
         cerr << "[Error outlier num in window_id=" << window_id << "], outlier_num=" << outlier_num << ", check_outlier_num=" << check_outlier_num << endl;
+        cout << "[Error outlier num in window_id=" << window_id << "], outlier_num=" << outlier_num << ", check_outlier_num=" << check_outlier_num << endl;
+        cout << "RTOD outliers:" << endl;
+        sort(outlier_list, outlier_list + outlier_num);
+        for (int i = 0; i < outlier_num; i++) {
+            cout << i << ": " << outlier_list[i] << endl;
+        }
+        cout << "Naive outliers:" << endl;
+        int onum = 0;
+        for (auto outlier: check_outlier_list) {
+            cout << onum << ": " << outlier.first << endl;
+            onum++;
+        }
+        cout << "BVH node index:" << endl;
+        sort(state.h_ray_origin_idx, state.h_ray_origin_idx + state.params.ray_origin_num);
+        for (int i = 0; i < state.params.ray_origin_num; i++) {
+            cout << i << ": " << state.h_ray_origin_idx[i] << endl;
+            if (i > 0 && state.h_ray_origin_idx[i] == state.h_ray_origin_idx[i - 1]) {
+                cout << "repeated idx: " << state.h_ray_origin_idx[i] << endl;
+            }
+        }
+        for (int i = 0; i < outlier_num; i++) {
+            int outlier_id = outlier_list[i];
+            if (!check_outlier_list.count(outlier_id)) {
+                cerr << "[Error outlier idx in window_id=" << window_id << "], outlier_idx=" << outlier_list[i]
+                    << ", outlier_neighbor_num=" << state.h_outlier_neightbor_num[i] << endl;
+                exit(1);
+            }
+        }
         exit(1);
     }
-    // for (int i = 0; i < outlier_num; i++) {
-    //     int outlier_id = (state.h_outlier_list[i] + (unit_num - window_id % unit_num) * state.slide) % state.window;
-    //     if (!check_outlier_list.count(outlier_id)) { // check idx
-    //         cerr << "[Error outlier idx in window_id=" << window_id << "], outlier_idx=" << outlier_list[i]
-    //              << ", outlier_neighbor_num=" << state.h_outlier_neightbor_num[i] << endl;
-    //         exit(1);
-    //     }
-    // }
 }
 
 void cleanup(ScanState &state) {
@@ -957,7 +977,7 @@ void prepare_c_non_points_queue(ScanState &state, int window_left, int window_ri
     // new points
     for (int i = window_right; i < window_right + state.slide; i++) {
         int cell_id = get_cell_id(state, i, true);
-        state.cell_queue[cell_id].enqueue(update_pos * state.slide + i - window_right); // 记录 id
+        state.cell_queue[cell_id].enqueue(update_pos * state.slide + (i - window_right)); // record id
     }
 
     // classify cell
@@ -1148,7 +1168,7 @@ int main(int argc, char *argv[])
     timer.showTimeNew();
     
     size_t used_cpu_mem = get_cpu_memory_usage() - init_cpu_mem;
-    std::cout << "[Mem] Host cpu memery used(MB): " << 1.0 * used_cpu_mem / (1 << 10) << std::endl;
+    std::cout << "[Mem] Host cpu memory used(MB): " << 1.0 * used_cpu_mem / (1 << 10) << std::endl;
     size_t rtod_used_gpu_memory;
     stop_gpu_mem(&start_gpu_memory, &rtod_used_gpu_memory);
     std::cout << "[Mem] Device memory used for data(MB): " << 1.0 * rtod_used_gpu_memory / (1 << 20) << std::endl;

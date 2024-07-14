@@ -23,7 +23,9 @@
 #define OPTIMIZATION 2 // 0: No Opt, 1: only Grid Filtering, 2: Grid Filtering + Ray-BVH Inversing
 #endif
 
+#ifndef MK
 #define MK 50
+#endif
 
 struct Params
 {

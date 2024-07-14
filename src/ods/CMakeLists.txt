@@ -29,6 +29,7 @@
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/aabb.cu PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
 
 add_definitions(-DDIMENSION=${DIMENSION})
+add_definitions(-DMK=${MK})
 add_definitions(-DCOMPACTION=${COMPACTION})
 add_definitions(-DUPDATE_GAS_TYPE=${UPDATE_GAS_TYPE})
 add_definitions(-DOPTIMIZATION=${OPTIMIZATION})

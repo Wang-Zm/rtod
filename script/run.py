@@ -13,7 +13,7 @@ def gau_1d(compaction = 0, update_gas_type = 1, optimization = 2):
     args = f'--n 1000000 --R 0.028 --K 50 --window 100000 --slide 5000'
     cmd = f"./build/bin/optixScan {args} -f {data_dir}gaussian.txt >> {output_file}" # set args --n 1000000 --R 0.028 --K 50 --window 100000 --slide 5000 -f data/gaussian.txt
     print(cmd)
-    os.system(f'cd build/ && cmake ../src/ -D DIMENSION=1 \
+    os.system(f'cd build/ && cmake ../src/ -D DIMENSION=1 -D MK=50 \
                 -D COMPACTION={compaction} -D UPDATE_GAS_TYPE={update_gas_type} \
                 -D CMAKE_BUILD_TYPE={build_type} -D OPTIMIZATION={optimization} && \
                 make')
@@ -25,7 +25,7 @@ def stk_1d(compaction = 0, update_gas_type = 1, optimization = 2):
     args = f'--n 1048572 --R 0.45 --K 50 --window 100000 --slide 5000'
     cmd = f"./build/bin/optixScan {args} -f {data_dir}stock.txt >> {output_file}"
     print(cmd)
-    os.system(f'cd build/ && cmake ../src/ -D DIMENSION=1 \
+    os.system(f'cd build/ && cmake ../src/ -D DIMENSION=1 -D MK=50 \
                 -D COMPACTION={compaction} -D UPDATE_GAS_TYPE={update_gas_type} \
                 -D CMAKE_BUILD_TYPE={build_type} -D OPTIMIZATION={optimization} && \
                 make')
@@ -37,7 +37,7 @@ def tao_3d(compaction = 0, update_gas_type = 1, optimization = 2):
     args = f'--n 575468 --R 1.9 --K 50 --window 10000 --slide 500'
     cmd = f"./build/bin/optixScan {args} -f {data_dir}tao.txt >> {output_file}"
     print(cmd)
-    os.system(f'cd build/ && cmake ../src/ -D DIMENSION=3 \
+    os.system(f'cd build/ && cmake ../src/ -D DIMENSION=3 -D MK=50 \
                 -D COMPACTION={compaction} -D UPDATE_GAS_TYPE={update_gas_type} \
                 -D CMAKE_BUILD_TYPE={build_type} -D OPTIMIZATION={optimization} && \
                 make')
@@ -47,7 +47,7 @@ def tao_3d(compaction = 0, update_gas_type = 1, optimization = 2):
 #     logtime = time.strftime("%y%m%d-%H%M%S")
 #     output_file = f"log/{ugt_dict[update_gas_type]}/fast_build/vary_points_num_build_bvh/{logtime}-TAO.log"
 #     points_num_list = [2500, 5000, 10000, 20000, 40000]
-#     os.system(f'cd build/ && cmake ../src/ -D DIMENSION=3 \
+#     os.system(f'cd build/ && cmake ../src/ -D DIMENSION=3 -D MK=50 \
 #                 -D COMPACTION={compaction} -D UPDATE_GAS_TYPE={update_gas_type} \
 #                 -D CMAKE_BUILD_TYPE={build_type} && \
 #                 make')
@@ -62,7 +62,7 @@ def tao_3d(compaction = 0, update_gas_type = 1, optimization = 2):
 #     output_file = f"log/{ugt_dict[update_gas_type]}/fast_build/vary_rays_istests_per_ray/{logtime}-TAO.log"
 #     rays_num_list = [2000, 4000, 6000, 8000, 10000]
 #     k_list = [10, 30, 50, 70]
-#     os.system(f'cd build/ && cmake ../src/ -D DIMENSION=3 \
+#     os.system(f'cd build/ && cmake ../src/ -D DIMENSION=3 -D MK=50 \
 #                 -D COMPACTION={compaction} -D UPDATE_GAS_TYPE={update_gas_type} \
 #                 -D CMAKE_BUILD_TYPE={build_type} && \
 #                 make')
@@ -84,7 +84,7 @@ def gau_1d_vary_parameters(Wo=True, So=True, Ro=True, Ko=True):
     R_list      = [0.25, 0.5, 1.0, 5.0, 10.0]
     K_list      = [10, 30, 50, 70, 100]
     
-    os.system(f'cd build/ && cmake ../src/ -D DIMENSION={gau_dim} \
+    os.system(f'cd build/ && cmake ../src/ -D DIMENSION={gau_dim} -D MK=50 \
                 -D COMPACTION={compaction} -D UPDATE_GAS_TYPE={update_gas_type} \
                 -D CMAKE_BUILD_TYPE={build_type} -D OPTIMIZATION=2 && \
                 make')
@@ -112,6 +112,10 @@ def gau_1d_vary_parameters(Wo=True, So=True, Ro=True, Ko=True):
     if Ko:
         output_file = f"log/{ugt_dict[update_gas_type]}/vary_params/K/{logtime}-GAU.log"
         for K in K_list:
+            os.system(f'cd build/ && cmake ../src/ -D DIMENSION={gau_dim} -D MK={K} \
+                -D COMPACTION={compaction} -D UPDATE_GAS_TYPE={update_gas_type} \
+                -D CMAKE_BUILD_TYPE={build_type} -D OPTIMIZATION=2 && \
+                make')
             args = f'--n {gau_N} --R {gau_R} --K {K} --window 100000 --slide 5000'
             cmd = f"./build/bin/optixScan {args} -f {data_dir}{dataset}.txt >> {output_file}"
             print(cmd)
@@ -128,7 +132,7 @@ def stk_1d_vary_parameters(Wo=True, So=True, Ro=True, Ko=True):
     R_list      = [0.25, 0.5, 1.0, 5.0, 10.0]
     K_list      = [10, 30, 50, 70, 100]
     
-    os.system(f'cd build/ && cmake ../src/ -D DIMENSION={stk_dim} \
+    os.system(f'cd build/ && cmake ../src/ -D DIMENSION={stk_dim} -D MK=50 \
                 -D COMPACTION={compaction} -D UPDATE_GAS_TYPE={update_gas_type} \
                 -D CMAKE_BUILD_TYPE={build_type} -D OPTIMIZATION=2 && \
                 make')
@@ -156,6 +160,10 @@ def stk_1d_vary_parameters(Wo=True, So=True, Ro=True, Ko=True):
     if Ko:
         output_file = f"log/{ugt_dict[update_gas_type]}/vary_params/K/{logtime}-STK.log"
         for K in K_list:
+            os.system(f'cd build/ && cmake ../src/ -D DIMENSION={stk_dim} -D MK={K} \
+                -D COMPACTION={compaction} -D UPDATE_GAS_TYPE={update_gas_type} \
+                -D CMAKE_BUILD_TYPE={build_type} -D OPTIMIZATION=2 && \
+                make')
             args = f'--n {stk_N} --R {stk_R} --K {K} --window 100000 --slide 5000'
             cmd = f"./build/bin/optixScan {args} -f {data_dir}{dataset}.txt >> {output_file}"
             print(cmd)
@@ -172,7 +180,7 @@ def tao_3d_vary_parameters(Wo=True, So=True, Ro=True, Ko=True):
     R_list      = [0.25, 0.5, 1.0, 5.0, 10.0]
     K_list      = [10, 30, 50, 70, 100]
     
-    os.system(f'cd build/ && cmake ../src/ -D DIMENSION={tao_dim} \
+    os.system(f'cd build/ && cmake ../src/ -D DIMENSION={tao_dim} -D MK=50 \
                 -D COMPACTION={compaction} -D UPDATE_GAS_TYPE={update_gas_type} \
                 -D CMAKE_BUILD_TYPE={build_type} -D OPTIMIZATION=2 && \
                 make')
@@ -200,6 +208,10 @@ def tao_3d_vary_parameters(Wo=True, So=True, Ro=True, Ko=True):
     if Ko:
         output_file = f"log/{ugt_dict[update_gas_type]}/vary_params/K/{logtime}-TAO.log"
         for K in K_list:
+            os.system(f'cd build/ && cmake ../src/ -D DIMENSION={tao_dim} -D MK={K} \
+                -D COMPACTION={compaction} -D UPDATE_GAS_TYPE={update_gas_type} \
+                -D CMAKE_BUILD_TYPE={build_type} -D OPTIMIZATION=2 && \
+                make')
             args = f'--n {tao_N} --R {tao_R} --K {K} --window 10000 --slide 500'
             cmd = f"./build/bin/optixScan {args} -f {data_dir}{dataset}.txt >> {output_file}"
             print(cmd)
@@ -215,7 +227,7 @@ def stk_1d_vary_ray_load(compaction = 0, update_gas_type = 1):
         args = f'--n 1048572 --R 0.45 --K {K} --window 100000 --slide 5000 --launch_ray_num 800'
         cmd = f"./build/bin/optixScan {args} -f {data_dir}stock.txt >> {output_file}"
         print(cmd)
-        os.system(f'cd build/ && cmake ../src/ -D DIMENSION=1 \
+        os.system(f'cd build/ && cmake ../src/ -D DIMENSION=1 -D MK=50 \
                     -D COMPACTION={compaction} -D UPDATE_GAS_TYPE={update_gas_type} \
                     -D CMAKE_BUILD_TYPE={build_type} -D OPTIMIZATION=0 && \
                     make')
@@ -232,7 +244,7 @@ def stk_1d_vary_ray_num(compaction = 0, update_gas_type = 1):
         args = f'--n 1048572 --R 0.45 --K 50 --window 100000 --slide 5000 --launch_ray_num {ray_num}'
         cmd = f"./build/bin/optixScan {args} -f {data_dir}stock.txt >> {output_file}"
         print(cmd)
-        os.system(f'cd build/ && cmake ../src/ -D DIMENSION=1 \
+        os.system(f'cd build/ && cmake ../src/ -D DIMENSION=1 -D MK=50 \
                     -D COMPACTION={compaction} -D UPDATE_GAS_TYPE={update_gas_type} \
                     -D CMAKE_BUILD_TYPE={build_type} -D OPTIMIZATION=0 && \
                     make')
@@ -243,7 +255,7 @@ compaction = 0
 update_gas_type = 1
 
 # stk_1d_vary_ray_load() # Figure 8: [Time] detect outlier in log <-> ray traversal
-stk_1d_vary_ray_num()
+# stk_1d_vary_ray_num()
 
 # gau_1d(compaction, update_gas_type, 0) # Figure 15
 # stk_1d(compaction, update_gas_type, 0) # Figure 15
@@ -258,6 +270,6 @@ stk_1d_vary_ray_num()
 # tao_3d(compaction, update_gas_type, 2) # Figure 9, 10, 15, 16
 
 
-# gau_1d_vary_parameters(True, False, False, False) # Figure 11, 12, 13, 14
-# stk_1d_vary_parameters(True, False, False, False) # Figure 11, 12, 13, 14
-# tao_3d_vary_parameters(True, False, False, False) # Figure 11, 12, 13, 14
+gau_1d_vary_parameters(True, True, True, True) # Figure 11, 12, 13, 14
+stk_1d_vary_parameters(True, True, True, True) # Figure 11, 12, 13, 14
+tao_3d_vary_parameters(True, True, True, True) # Figure 11, 12, 13, 14

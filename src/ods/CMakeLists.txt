@@ -36,9 +36,17 @@ add_definitions(-DOPTIMIZATION=${OPTIMIZATION})
 
 OPTIX_add_sample_executable( outlier_detection target_name
   outlier_detection.cpp
+  pipeline.cpp
+  bvh.cpp
+  grid.cpp
+  verify.cpp
   outlier_detection.cu
   aabb.cu
   outlier_detection.h
+  pipeline.h
+  bvh.h
+  grid.h
+  verify.h
   state.h
   timer.h
   # OPTIONS -rdc true

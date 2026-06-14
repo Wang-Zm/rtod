@@ -51,11 +51,15 @@ src/
 ├── ods/                    # Main application (outlier detection on streams)
 │   ├── CMakeLists.txt               # Defines the outlier_detection executable target
 │   ├── outlier_detection.h          # Params struct (device-side constants), Data structs
-│   ├── outlier_detection.cpp        # Host code: init OptiX, build GAS/pipeline/SBT, sliding window loop
+│   ├── outlier_detection.cpp        # Main: arg parsing, data I/O, mem alloc, sliding-window loop
+│   ├── pipeline.h / pipeline.cpp    # OptiX pipeline lifecycle (context, module, programs, SBT)
+│   ├── bvh.h / bvh.cpp              # BVH/GAS build, update, and rebuild
+│   ├── grid.h / grid.cpp            # Grid filtering: cell assignment, undetermined-point selection
+│   ├── verify.h / verify.cpp        # Debug verification (DEBUG_INFO only): result checking, stats
 │   ├── outlier_detection.cu         # Device code: raygen, intersection, miss, anyhit programs
-│   ├── aabb.cu             # GPU kernel kGenAABB: computes per-point AABBs for BVH
-│   ├── state.h             # ScanState (all state) + FixQueue (ring buffer for grid cells)
-│   └── timer.h             # High-precision timer for per-phase profiling
+│   ├── aabb.cu                      # GPU kernel kGenAABB: computes per-point AABBs for BVH
+│   ├── state.h                      # ScanState (all state) + FixQueue (ring buffer for grid cells)
+│   └── timer.h                      # High-precision timer for per-phase profiling
 include/                    # OptiX 7 API headers (optix.h, optix_device.h, etc.)
 data/                       # Input datasets: gaussian.txt (1D), stock.txt (1D), tao.txt (3D)
 script/

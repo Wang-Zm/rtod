@@ -451,7 +451,7 @@ void make_module(ScanState &state) {
     state.pipeline_compile_options.usesPrimitiveTypeFlags = OPTIX_PRIMITIVE_TYPE_FLAGS_CUSTOM;
 
     size_t inputSize = 0;
-    const char *input = sutil::getInputData(OPTIX_SAMPLE_NAME, OPTIX_SAMPLE_DIR, "optixScan.cu", inputSize);
+    const char *input = sutil::getInputData(OPTIX_SAMPLE_NAME, OPTIX_SAMPLE_DIR, "outlier_detection.cu", inputSize);
     size_t sizeof_log = sizeof(log);
 
     OPTIX_CHECK_LOG(optixModuleCreateFromPTX(

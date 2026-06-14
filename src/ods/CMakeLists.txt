@@ -34,11 +34,11 @@ add_definitions(-DCOMPACTION=${COMPACTION})
 add_definitions(-DUPDATE_GAS_TYPE=${UPDATE_GAS_TYPE})
 add_definitions(-DOPTIMIZATION=${OPTIMIZATION})
 
-OPTIX_add_sample_executable( optixScan target_name
-  optixScan.cpp
-  optixScan.cu
+OPTIX_add_sample_executable( outlier_detection target_name
+  outlier_detection.cpp
+  outlier_detection.cu
   aabb.cu
-  optixScan.h
+  outlier_detection.h
   state.h
   timer.h
   # OPTIONS -rdc true

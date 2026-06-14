@@ -78,7 +78,7 @@
 
 # This enforces a particular version of CMake that we require to process the script files
 # properly.  We rely on VERSION_GREATER_EQUAL which requires CMake v. 3.7.
-cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 
 # This sets up the name of our project.  For our purposes the main thing this controls is
 # the name of the VS solution file.
@@ -91,7 +91,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # As of CMake 2.6 policies were introduced in order to provide a mechanism for
 # adding backwards compatibility one feature at a time.  We will just specify
 # that all policies will use version 2.8.12 semantics.
-cmake_policy(VERSION 2.8.12)
+cmake_policy(VERSION 3.10)
 
 if( POLICY CMP0072 )
   # FindOpenGL prefers GLVND by default when available

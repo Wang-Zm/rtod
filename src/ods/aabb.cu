@@ -1,6 +1,6 @@
 #include <optix.h>
 #include <sutil/vec_math.h>
-#include "optixScan.h"
+#include "outlier_detection.h"
 
 __global__ void kGenAABB_t (
       double3* points,

@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <list>
 #include <deque>
-#include "optixScan.h"
+#include "outlier_detection.h"
 
 using namespace std;
 

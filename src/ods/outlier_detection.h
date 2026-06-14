@@ -1,5 +1,5 @@
-#ifndef OPTIXSCAN_H
-#define OPTIXSCAN_H
+#ifndef OUTLIER_DETECTION_H
+#define OUTLIER_DETECTION_H
 
 #ifndef DATA_N
 #define DATA_N  1e8

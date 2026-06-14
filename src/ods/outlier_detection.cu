@@ -1,6 +1,6 @@
 #include <optix.h>
 
-#include "optixScan.h"
+#include "outlier_detection.h"
 
 #include <sutil/vec_math.h>
 

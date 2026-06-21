@@ -22,7 +22,7 @@ cd build/ && cmake ../src/ -D DIMENSION=1 -D MK=50 \
 
 | Flag | Meaning | Values |
 |------|---------|--------|
-| `DIMENSION` | Data dimensionality | `1` or `3` |
+| `DIMENSION` | Data dimensionality | `1`, `2`, or `3` |
 | `MK` | Max K value (array sizing) | e.g. `50` |
 | `OPTIMIZATION` | Algorithm variant | `0`=baseline (all-points), `1`=grid filtering, `2`=grid filtering + ray-BVH inversion (default) |
 | `UPDATE_GAS_TYPE` | BVH update strategy | `0`=in-place update, `1`=rebuild |
@@ -99,7 +99,7 @@ This enforces 5 gates (see script for details):
 
 | Invariant | Location | Rationale |
 |-----------|----------|-----------|
-| `DIMENSION ∈ {1, 3}` | `outlier_detection.h` + `ods/CMakeLists.txt` | Only 1D and 3D intersection logic implemented |
+| `DIMENSION ∈ {1, 2, 3}` | `outlier_detection.h` + `ods/CMakeLists.txt` | Dimension-specific distance formulas in device code |
 | `OPTIMIZATION ∈ {0, 1, 2}` | both | Each value selects a different intersection program in `.cu` |
 | `UPDATE_GAS_TYPE ∈ {0, 1}` | both | OptiX only supports build or update operations |
 | `COMPACTION == 0` | `outlier_detection.h` | BVH compaction path not implemented |
@@ -133,7 +133,8 @@ Key design decisions are documented in `docs/decisions/`. Read these before prop
 - **No `using namespace std` in headers** — pollutes every includer's namespace. Qualify with `std::`.
 - **No malloc for GPU-visible memory** — always use `cudaMalloc` / `cudaFree`.
 - **No hardcoded `/home/wzm/` paths** — use relative paths or configurable directories.
-- **Don't add runtime CLI flags for algorithm variants** — those belong in compile-time `#if` blocks (see [ADR 003](docs/decisions/003-compile-time-flags-over-runtime-config.md)).
+- **Don't add runtime CLI flags for algorithm variants** — those belong in compile-time `if constexpr` blocks (see [ADR 003](docs/decisions/003-compile-time-flags-over-runtime-config.md)).
+- **After code changes, review and update CLAUDE.md and docs/decisions/** — if a code change alters a fact documented in these files (DIMENSION range, C++ standard, invariants, file structure), update the docs in the same commit. Gate F in `script/check.sh` catches some drifts automatically, but not all.
 
 ## Key Design Choices
 

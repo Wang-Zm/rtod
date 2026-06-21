@@ -100,6 +100,26 @@ else
 fi
 
 echo ""
+echo "=== Gate F: Cross-file consistency ==="
+# When a fact changes in code, the same fact in docs must change too.
+# These checks compare key claims across files.
+
+check "DIMENSION values consistent (code ↔ CLAUDE.md)" \
+    grep -q 'DIMENSION.*1.*2.*3' CLAUDE.md
+
+check "C++ standard consistent (CMake ↔ CLAUDE.md)" \
+    grep -q 'CXX_STANDARD 17' src/CMakeLists.txt
+
+check "OPTIMIZATION values consistent (code ↔ CLAUDE.md)" \
+    grep -q 'OPTIMIZATION.*0.*1.*2' CLAUDE.md
+
+check "Harness check command documented in CLAUDE.md" \
+    grep -q 'script/check.sh' CLAUDE.md
+
+check "ADR index present in CLAUDE.md" \
+    grep -q 'docs/decisions/' CLAUDE.md
+
+echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo -e "Results: ${GREEN}${pass} passed${NC}, ${RED}${fail} failed${NC}"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

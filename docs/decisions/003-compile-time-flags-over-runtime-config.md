@@ -1,14 +1,17 @@
 # ADR 003: Compile-Time Flags over Runtime Configuration
 
 **Status**: accepted
-**Date**: 2024 (inferred from codebase history)
+**Date**: 2024 (inferred from codebase history)  
+**Updated**: 2026-06 — migrated from `#if` preprocessor to C++17 `if constexpr`
 
 ## Context
 
 The algorithm has several axes of variation (`DIMENSION`, `OPTIMIZATION`, `UPDATE_GAS_TYPE`,
-`MK`, `COMPACTION`) that affect both host and device code. Device code (`outlier_detection.cu`)
-uses `#if OPTIMIZATION == 0` preprocessor conditionals to select entirely different
-intersection program variants.
+`MK`, `COMPACTION`) that affect both host and device code. Originally, device code
+(`outlier_detection.cu`) used `#if OPTIMIZATION == 0` preprocessor conditionals to select
+entirely different intersection program variants. In 2026, these were migrated to C++17
+`if constexpr` — the compile-time selection decision remains, but the mechanism is now
+type-checked and scoped to C++ blocks rather than raw preprocessor text substitution.
 
 ## Decision
 

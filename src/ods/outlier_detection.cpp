@@ -441,46 +441,46 @@ void detect_outlier(ScanState &state, bool warmup) {
 
     // * start sliding
     while (remaining_data_num >= state.slide && slide_num < 10000) {
-        timer.startTimer(&timer.total);
+        timer.start(TIMER_total);
         CUDA_CHECK(cudaMemset(state.params.outlier_num, 0, sizeof(int)));
 #if OPTIMIZATION == 2
         CUDA_CHECK(cudaMemset(state.params.outlier_neighbor_num, 0, state.window * sizeof(int)));
 #endif
-        timer.startTimer(&timer.copy_new_points_h2d);
+        timer.start(TIMER_copy_new_points_h2d);
         // transfer new slide to the device
         CUDA_CHECK(cudaMemcpy(
             state.params.points + update_pos * state.slide,
             state.new_slide,
             state.slide * sizeof(double3),
             cudaMemcpyHostToDevice));
-        timer.stopTimer(&timer.copy_new_points_h2d);
+        timer.stop(TIMER_copy_new_points_h2d);
 
 #if OPTIMIZATION == 1 || OPTIMIZATION == 2
         // prepare current window in host
         memcpy(state.h_current_window + update_pos * state.slide,
             state.new_slide,
             state.slide * sizeof(double3));
-        timer.startTimer(&timer.prepare_cell);
+        timer.start(TIMER_prepare_cell);
         prepare_c_non_points_queue(state, window_left, window_right, update_pos);
         assert(state.params.ray_origin_num <= state.window);
-        timer.stopTimer(&timer.prepare_cell);
+        timer.stop(TIMER_prepare_cell);
 #endif
 
-        timer.startTimer(&timer.build_bvh);
+        timer.start(TIMER_build_bvh);
 #if UPDATE_GAS_TYPE == 0
         update_gas(state, update_pos);
 #else
         rebuild_gas(state, update_pos);
 #endif
         CUDA_SYNC_CHECK();
-        timer.stopTimer(&timer.build_bvh);
+        timer.stop(TIMER_build_bvh);
 
-        timer.startTimer(&timer.detect_outlier);
+        timer.start(TIMER_detect_outlier);
         launch(state);
-        timer.stopTimer(&timer.detect_outlier);
+        timer.stop(TIMER_detect_outlier);
 
         // * D2H
-        timer.startTimer(&timer.copy_outlier_d2h);
+        timer.start(TIMER_copy_outlier_d2h);
         int outlier_num = 0;
 #if OPTIMIZATION == 0 || OPTIMIZATION == 1
         CUDA_CHECK(cudaMemcpy(&outlier_num, state.params.outlier_num, sizeof(int), cudaMemcpyDeviceToHost));
@@ -498,7 +498,7 @@ void detect_outlier(ScanState &state, bool warmup) {
         }
 #endif
         assert(outlier_num <= state.window);
-        timer.stopTimer(&timer.copy_outlier_d2h);
+        timer.stop(TIMER_copy_outlier_d2h);
 
         slide_num++;
         remaining_data_num  -= state.slide;
@@ -507,7 +507,7 @@ void detect_outlier(ScanState &state, bool warmup) {
         window_left         += state.slide;
         window_right        += state.slide;
 
-        timer.stopTimer(&timer.total);
+        timer.stop(TIMER_total);
 
 #if DEBUG_INFO == 1
         if (!warmup) {
@@ -560,13 +560,13 @@ int main(int argc, char *argv[])
     for (int i = 0; i < 10; i++) {
         detect_outlier(state, true);    // warmup
     }
-    timer.clearNew();
+    timer.clear();
     detect_outlier(state, false);       // timing
 
     int slide_num = (data_num - state.window) / state.slide;
     if (slide_num == 0) slide_num = 1;
     timer.average(slide_num);
-    timer.showTimeNew();
+    timer.print();
 
     size_t used_cpu_mem = get_cpu_memory_usage() - init_cpu_mem;
     std::cout << "[Mem] Host cpu memory used(MB): " << 1.0 * used_cpu_mem / (1 << 10) << std::endl;

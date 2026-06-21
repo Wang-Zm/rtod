@@ -73,11 +73,11 @@ void prepare_c_non_points_queue(ScanState &state, int window_left, int window_ri
     state.params.ray_origin_num = undetermined_point_num;
     state.total_cast_rays      += undetermined_point_num;
     // transfer state.h_ray_origin_list to device
-    timer.startTimer(&timer.copy_filtered_points_h2d);
+    timer.start(TIMER_copy_filtered_points_h2d);
     CUDA_CHECK(cudaMemcpy(
             state.params.ray_origin_list,
             state.h_ray_origin_list,
             state.params.ray_origin_num * sizeof(double3),
             cudaMemcpyHostToDevice));
-    timer.stopTimer(&timer.copy_filtered_points_h2d);
+    timer.stop(TIMER_copy_filtered_points_h2d);
 }

@@ -27,6 +27,30 @@
 #define MK 50
 #endif
 
+// ── compile-time invariants ─────────────────────────────────────────────
+// These guards prevent misconfiguration at build time.
+// If you hit one of these, fix the CMake flags (-D...) and reconfigure.
+
+#if DIMENSION != 1 && DIMENSION != 3
+#error "DIMENSION must be 1 or 3"
+#endif
+
+#if OPTIMIZATION < 0 || OPTIMIZATION > 2
+#error "OPTIMIZATION must be 0, 1, or 2"
+#endif
+
+#if UPDATE_GAS_TYPE != 0 && UPDATE_GAS_TYPE != 1
+#error "UPDATE_GAS_TYPE must be 0 (update) or 1 (rebuild)"
+#endif
+
+#if COMPACTION != 0
+#error "COMPACTION != 0 is not supported (BVH compaction not implemented)"
+#endif
+
+#if MK < 1
+#error "MK must be >= 1"
+#endif
+
 struct Params
 {
     double3*                points;    

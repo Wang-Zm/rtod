@@ -78,6 +78,63 @@ pic/                        # Output PDF figures
 
 **Optimization level 2** inverts the traditional approach: instead of casting rays FROM candidate points and testing against all points in BVH, it builds a BVH over only the undetermined points and casts rays from ALL window points, atomically incrementing neighbor counters on the BVH primitives.
 
+## Harness — Verification Gates
+
+Run all checks before committing:
+
+```bash
+bash script/check.sh
+```
+
+This enforces 5 gates (see script for details):
+- **Gate A**: File existence — every file CLAUDE.md references still exists
+- **Gate B**: Compile-time invariant guards — `#error` directives present in `outlier_detection.h` and CMake-level checks in `ods/CMakeLists.txt`
+- **Gate C**: Runtime invariant guards — `validate_params()` called from `main`, guards for `window % slide`, `K <= MK`
+- **Gate D**: ADR coverage — all 5 expected ADRs present in `docs/decisions/`
+- **Gate E**: Forbidden patterns — no `using namespace std` in headers
+
+## Invariants
+
+### Compile-time (enforced via `#error` in `outlier_detection.h` + CMake `FATAL_ERROR`)
+
+| Invariant | Location | Rationale |
+|-----------|----------|-----------|
+| `DIMENSION ∈ {1, 3}` | `outlier_detection.h` + `ods/CMakeLists.txt` | Only 1D and 3D intersection logic implemented |
+| `OPTIMIZATION ∈ {0, 1, 2}` | both | Each value selects a different intersection program in `.cu` |
+| `UPDATE_GAS_TYPE ∈ {0, 1}` | both | OptiX only supports build or update operations |
+| `COMPACTION == 0` | `outlier_detection.h` | BVH compaction path not implemented |
+| `MK >= 1` | `outlier_detection.h` | FixQueue uses `arr[MK]` |
+
+### Runtime (enforced via `validate_params()` + `assert` in `outlier_detection.cpp`)
+
+| Invariant | Check | Consequence if violated |
+|-----------|-------|------------------------|
+| `K <= MK` | `validate_params()` | FixQueue overflow → segfault |
+| `window % slide == 0` | `validate_params()` | Ring-buffer index corruption |
+| `data_num >= window` | `validate_params()` | Out-of-bounds memory access |
+| `window > 0, slide > 0, R > 0, K > 0` | `validate_params()` | Undefined behavior |
+| `ray_origin_num <= window_size` | `assert` after grid filtering | Buffer overflow in `h_ray_origin_list` |
+| `outlier_num <= window_size` | `assert` after each slide | Logic error in outlier counting |
+
+## Architecture Decision Records (ADRs)
+
+Key design decisions are documented in `docs/decisions/`. Read these before proposing changes to the core algorithm:
+
+| ADR | Topic |
+|-----|-------|
+| [001](docs/decisions/001-custom-primitives-instead-of-triangles.md) | Custom primitives instead of triangles for point-distance queries |
+| [002](docs/decisions/002-ray-bvh-inversion.md) | Ray-BVH inversion (OPTIMIZATION == 2) |
+| [003](docs/decisions/003-compile-time-flags-over-runtime-config.md) | Compile-time flags over runtime configuration |
+| [004](docs/decisions/004-fixqueue-static-array.md) | FixQueue with static array bounds (MK) |
+| [005](docs/decisions/005-rebuild-over-update.md) | Rebuild over in-place BVH update |
+
+## Forbidden Patterns
+
+- **No `using namespace std` in headers** — pollutes every includer's namespace. Qualify with `std::`.
+- **No malloc for GPU-visible memory** — always use `cudaMalloc` / `cudaFree`.
+- **No hardcoded `/home/wzm/` paths** — use relative paths or configurable directories.
+- **Don't add runtime CLI flags for algorithm variants** — those belong in compile-time `#if` blocks (see [ADR 003](docs/decisions/003-compile-time-flags-over-runtime-config.md)).
+
 ## Key Design Choices
 
 - **Custom primitives** (not triangles): The BVH contains spheres (points). `outlier_detection.cu` defines a custom intersection program that tests for distance-based proximity rather than geometric intersection.

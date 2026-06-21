@@ -10,8 +10,6 @@
 #include <deque>
 #include "outlier_detection.h"
 
-using namespace std;
-
 class FixQueue {
 public:
     int         arr[MK];
@@ -87,10 +85,10 @@ struct ScanState
     double3*                        new_slide;
     CUdeviceptr                     d_aabb_ptr                = 0;
 
-    unordered_map<int, FixQueue>    cell_queue;
+    std::unordered_map<int, FixQueue>    cell_queue;
     double                          cell_length;
     int                             cell_count[DIMENSION];
-    vector<int>                     undetermined_cell_list;
+    std::vector<int>                     undetermined_cell_list;
 
     double                          max_value[DIMENSION];
     double                          min_value[DIMENSION];

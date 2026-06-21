@@ -4,13 +4,11 @@
 #include <sys/time.h>
 #include <iostream>
 
-using namespace std;
-
 class Timer{
   public:
 
   double time[30];
-  mutex timeMutex[30];
+  std::mutex timeMutex[30];
   double timebase;
 
   double copy_new_points_h2d;
@@ -100,75 +98,75 @@ class Timer{
   }
 
   void showTimeNew() {
-    cout << endl;
-    cout << "###########   Time  ##########" << endl;
+    std::cout << std::endl;
+    std::cout << "###########   Time  ##########" << std::endl;
     
-    cout << "[Time] copy new points h2d: " << copy_new_points_h2d << " ms" << endl;
-    cout << "[Time] copy filtered points h2d: " << copy_filtered_points_h2d << " ms" << endl;
-    cout << "[Time] copy outlier d2h: " << copy_outlier_d2h << " ms" << endl;
+    std::cout << "[Time] copy new points h2d: " << copy_new_points_h2d << " ms" << std::endl;
+    std::cout << "[Time] copy filtered points h2d: " << copy_filtered_points_h2d << " ms" << std::endl;
+    std::cout << "[Time] copy outlier d2h: " << copy_outlier_d2h << " ms" << std::endl;
 
-    cout << "[Time] prepare cell: " << prepare_cell << " ms" << endl;
-    cout << "[Time] build BVH: " << build_bvh << " ms" << endl;
-    cout << "[Time] detect outlier: " << detect_outlier << " ms" << endl;
-    cout << "[Time] total time for a slide: " << total << " ms" << endl;
+    std::cout << "[Time] prepare cell: " << prepare_cell << " ms" << std::endl;
+    std::cout << "[Time] build BVH: " << build_bvh << " ms" << std::endl;
+    std::cout << "[Time] detect outlier: " << detect_outlier << " ms" << std::endl;
+    std::cout << "[Time] total time for a slide: " << total << " ms" << std::endl;
     
-    cout << "##############################" << endl;
-    cout << endl;
+    std::cout << "##############################" << std::endl;
+    std::cout << std::endl;
   }
 
   // void showTime() {
-  //   cout << endl;
-  //   cout << "###########   Time  ##########" << endl;
+  //   cout << std::endl;
+  //   cout << "###########   Time  ##########" << std::endl;
   //   cout << "[Time] build BVH: ";
-  //   cout << time[0] << " ms" << endl;
+  //   cout << time[0] << " ms" << std::endl;
 
   //   cout << "[Time] initialize cell: ";
-  //   cout << time[8] << " ms" << endl;
+  //   cout << time[8] << " ms" << std::endl;
 
   //   cout << "[Time] expired points: ";
-  //   cout << time[10] << " ms" << endl;
+  //   cout << time[10] << " ms" << std::endl;
   //   cout << "[Time] new points: ";
-  //   cout << time[11] << " ms" << endl;
+  //   cout << time[11] << " ms" << std::endl;
 
   //   cout << "[Time] prepare cell: ";
-  //   cout << time[9] << " ms" << endl;
+  //   cout << time[9] << " ms" << std::endl;
 
   //   cout << "[Time] copy points in new slide: ";
-  //   cout << time[4] << " ms" << endl;
+  //   cout << time[4] << " ms" << std::endl;
 
   //   cout << "[Time] copy points casting ray/rebuilding BVH: ";
-  //   cout << time[16] << " ms" << endl;
+  //   cout << time[16] << " ms" << std::endl;
 
   //   cout << "[Time] overall update: ";
-  //   cout << time[1] << " ms" << endl;
+  //   cout << time[1] << " ms" << std::endl;
 
   //   // cout << "[Time] rebuild gas: ";
-  //   // cout << time[22] << " ms" << endl;
+  //   // cout << time[22] << " ms" << std::endl;
 
   //   // cout << "[Time] time of prepare cell and rebuild BVH: ";
-  //   // cout << time[14] << " ms" << endl;
+  //   // cout << time[14] << " ms" << std::endl;
     
   //   cout << "[Time] launch for sliding: ";
-  //   cout << time[5] << " ms" << endl;
+  //   cout << time[5] << " ms" << std::endl;
 
   //   cout << "[Time] transfer outliers back: ";
-  //   cout << time[6] << " ms" << endl;
+  //   cout << time[6] << " ms" << std::endl;
     
   //   cout << "[Time] total time for a slide: ";
-  //   cout << time[7] << " ms" << endl;
+  //   cout << time[7] << " ms" << std::endl;
 
   //   // cout << "[Time] clarify points: ";
-  //   // cout << time[12] << " ms" << endl;
+  //   // cout << time[12] << " ms" << std::endl;
 
   //   // cout << "[Time] memcpy c_non points to device: ";
-  //   // cout << time[13] << " ms" << endl;
+  //   // cout << time[13] << " ms" << std::endl;
 
-  //   cout << "##############################" << endl;
-  //   cout << endl;
+  //   cout << "##############################" << std::endl;
+  //   cout << std::endl;
   // }
 
   // void showTime(int tid, string description) {
-  //   cout << "[Time] " << description << ": " << time[tid] << endl;
+  //   cout << "[Time] " << description << ": " << time[tid] << std::endl;
   // }
 
 };

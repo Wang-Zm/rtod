@@ -34,6 +34,23 @@ add_definitions(-DCOMPACTION=${COMPACTION})
 add_definitions(-DUPDATE_GAS_TYPE=${UPDATE_GAS_TYPE})
 add_definitions(-DOPTIMIZATION=${OPTIMIZATION})
 
+# Harness Gate A: validate compile-time parameters at CMake level
+if(NOT DIMENSION MATCHES "^(1|3)$")
+  message(FATAL_ERROR "DIMENSION must be 1 or 3, got '${DIMENSION}'")
+endif()
+if(NOT OPTIMIZATION MATCHES "^(0|1|2)$")
+  message(FATAL_ERROR "OPTIMIZATION must be 0, 1, or 2, got '${OPTIMIZATION}'")
+endif()
+if(NOT UPDATE_GAS_TYPE MATCHES "^(0|1)$")
+  message(FATAL_ERROR "UPDATE_GAS_TYPE must be 0 or 1, got '${UPDATE_GAS_TYPE}'")
+endif()
+if(NOT COMPACTION MATCHES "^(0)$")
+  message(FATAL_ERROR "COMPACTION must be 0 (not implemented), got '${COMPACTION}'")
+endif()
+if(NOT MK GREATER 0)
+  message(FATAL_ERROR "MK must be >= 1, got '${MK}'")
+endif()
+
 OPTIX_add_sample_executable( outlier_detection target_name
   outlier_detection.cpp
   pipeline.cpp

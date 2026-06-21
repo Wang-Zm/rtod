@@ -1,3 +1,4 @@
+#include <cassert>
 #include <optix.h>
 #include <optix_function_table_definition.h>
 #include <optix_stubs.h>
@@ -261,6 +262,7 @@ void initialize_params(ScanState &state) {
 // ── launch ───────────────────────────────────────────────────────────────
 
 void launch(ScanState &state) {
+    assert(state.params.ray_origin_num <= state.window);
     if (state.params.ray_origin_num == 0) {
         return;
     }
@@ -340,6 +342,50 @@ void cleanup(ScanState &state) {
 }
 
 
+// ── runtime validation ───────────────────────────────────────────────────
+
+void validate_params(ScanState &state) {
+    // These are logic errors — if they fire, fix the CLI args or CMake flags.
+    if (state.window <= 0) {
+        cerr << "[FATAL] window must be > 0, got " << state.window << endl;
+        exit(1);
+    }
+    if (state.slide <= 0) {
+        cerr << "[FATAL] slide must be > 0, got " << state.slide << endl;
+        exit(1);
+    }
+    if (state.R <= 0) {
+        cerr << "[FATAL] R must be > 0, got " << state.R << endl;
+        exit(1);
+    }
+    if (state.K <= 0) {
+        cerr << "[FATAL] K must be > 0, got " << state.K << endl;
+        exit(1);
+    }
+    if (data_num < state.window) {
+        cerr << "[FATAL] data_num (" << data_num << ") must be >= window (" << state.window << ")" << endl;
+        exit(1);
+    }
+    if (state.window % state.slide != 0) {
+        cerr << "[FATAL] window (" << state.window << ") must be divisible by slide ("
+             << state.slide << "), otherwise ring-buffer indexing breaks." << endl;
+        exit(1);
+    }
+    if (state.K > MK) {
+        cerr << "[FATAL] K (" << state.K << ") must be <= MK (" << MK
+             << "). FixQueue internally uses arr[MK], so overflow would occur. "
+                "Rebuild with -D MK=" << state.K << endl;
+        exit(1);
+    }
+    if (state.launch_ray_num > state.window) {
+        cerr << "[FATAL] launch_ray_num (" << state.launch_ray_num
+             << ") must be <= window (" << state.window << ")" << endl;
+        exit(1);
+    }
+    std::cout << "[Invariant] All runtime parameter checks passed." << std::endl;
+}
+
+
 // ── logging ──────────────────────────────────────────────────────────────
 
 void log_common_info(ScanState &state) {
@@ -408,6 +454,7 @@ void detect_outlier(ScanState &state, bool warmup) {
             state.slide * sizeof(double3));
         timer.startTimer(&timer.prepare_cell);
         prepare_c_non_points_queue(state, window_left, window_right, update_pos);
+        assert(state.params.ray_origin_num <= state.window);
         timer.stopTimer(&timer.prepare_cell);
 #endif
 
@@ -442,6 +489,7 @@ void detect_outlier(ScanState &state, bool warmup) {
             }
         }
 #endif
+        assert(outlier_num <= state.window);
         timer.stopTimer(&timer.copy_outlier_d2h);
 
         slide_num++;
@@ -476,6 +524,7 @@ int main(int argc, char *argv[])
 {
     ScanState state;
     parse_args(state, argc, argv);
+    validate_params(state);
     size_t start_gpu_memory;
     start_gpu_mem(&start_gpu_memory);
 

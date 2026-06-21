@@ -12,8 +12,6 @@
 
 using namespace std;
 
-extern "C" void kGenAABB(double3 *points, double radius, unsigned int numPrims, OptixAabb *d_aabb);
-
 void make_gas(ScanState &state) {
     size_t make_gas_start;
     start_gpu_mem(&make_gas_start);

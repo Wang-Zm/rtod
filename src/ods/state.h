@@ -7,6 +7,10 @@
 #include <unordered_map>
 #include "outlier_detection.h"
 
+// GPU memory tracking (host-side, defined in outlier_detection.cpp)
+void start_gpu_mem(size_t* avail_mem);
+void stop_gpu_mem(size_t* avail_mem, size_t* used);
+
 class FixQueue {
 public:
     int         arr[MK];

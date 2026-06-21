@@ -80,6 +80,10 @@ void stop_gpu_mem(size_t* avail_mem, size_t* used) {
 
 void read_data(std::string& outfile, ScanState &state) {
     vertices = (double3*) malloc(data_num * sizeof(double3));
+    if (!vertices) {
+        cerr << "[FATAL] Failed to allocate " << (data_num * sizeof(double3)) << " bytes for data" << endl;
+        exit(1);
+    }
 
     ifstream fin;
     string line;
@@ -410,8 +414,6 @@ void log_common_info(ScanState &state) {
 
 // ── core sliding-window loop ─────────────────────────────────────────────
 
-extern "C" void kGenAABB(double3 *points, double radius, unsigned int numPrims, OptixAabb *d_aabb);
-
 void detect_outlier(ScanState &state, bool warmup) {
     CUDA_CHECK(cudaMemcpy(
         state.params.points,
@@ -539,8 +541,6 @@ int main(int argc, char *argv[])
 
     initialize_optix(state);
 
-    size_t optix_context_used;
-    stop_gpu_mem(&start_gpu_memory, &optix_context_used);
     start_gpu_mem(&start_gpu_memory);
 
     data_h2d(state);

@@ -45,6 +45,9 @@ void printUsageAndExit(const char* argv0) {
 
 size_t get_cpu_memory_usage() {
     FILE* file = fopen("/proc/self/status", "r");
+    if (!file) {
+        return 0; // /proc not available (non-Linux)
+    }
     int result = -1;
     char line[128];
     while (fgets(line, 128, file) != nullptr) {
@@ -83,6 +86,7 @@ void read_data(std::string& outfile, ScanState &state) {
     fin.open(outfile, ios::in);
     if (!fin.is_open()) {
         cerr << "Fail to open [" << outfile << "]!" << endl;
+        exit(1);
     }
     for (int dim_id = 0; dim_id < DIMENSION; dim_id++) {
         state.max_value[dim_id] = -FLT_MAX;

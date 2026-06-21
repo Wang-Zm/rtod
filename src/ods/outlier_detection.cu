@@ -20,8 +20,7 @@ __forceinline__ __device__ bool operator<(const float3 a, const float3 b)
 
 extern "C" __global__ void __raygen__rg() {
     // Lookup our location within the launch grid
-    const uint3 idx = optixGetLaunchIndex();    
-    const uint3 dim = optixGetLaunchDimensions(); 
+    const uint3 idx = optixGetLaunchIndex();
 
     // Map our launch idx to a screen location and create a ray from the camera
     // location through the screen 

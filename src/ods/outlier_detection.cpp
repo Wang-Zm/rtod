@@ -16,11 +16,9 @@
 #include "timer.h"
 
 #include <cstring>
-#include <iomanip>
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <unistd.h>
 
 using namespace std;
 
@@ -36,8 +34,12 @@ void printUsageAndExit(const char* argv0) {
     std::cerr << "Options: --file | -f <filename>      Specify file for data input\n";
     std::cerr << "         --help | -h                 Print this usage message\n";
     std::cerr << "         --n <int>                   Set data num; defaults to 1e8\n";
-    std::cerr << "         --primitive <int>           Set primitive type, 0 for cube, 1 for triangle with anyhit; defaults to 0\n";
-    std::cerr << "         --nc                        No Comparison\n";
+    std::cerr << "         --window <int>              Window size\n";
+    std::cerr << "         --slide <int>               Slide size\n";
+    std::cerr << "         --R <double>                Distance threshold\n";
+    std::cerr << "         --K <int>                   Neighbor threshold\n";
+    std::cerr << "         --start_copy_pos <int>      Starting position offset\n";
+    std::cerr << "         --launch_ray_num <int>      Override number of rays to launch\n";
     exit(1);
 }
 
@@ -418,7 +420,7 @@ void detect_outlier(ScanState &state, bool warmup) {
 #if OPTIMIZATION == 1 || OPTIMIZATION == 2
     memcpy(state.h_current_window, vertices, state.window * sizeof(double3));
     for (int i = 0; i < state.window; i++) {
-        int cell_id = get_cell_id(state, i, true);
+        int cell_id = get_cell_id(state, i);
         state.cell_queue[cell_id].enqueue(i);
     }
 #endif

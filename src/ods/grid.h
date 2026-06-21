@@ -4,7 +4,7 @@
 #include "state.h"
 
 void initialize_cell(ScanState &state);
-int  get_cell_id(ScanState &state, int i, bool add);
+int  get_cell_id(ScanState &state, int i);
 void prepare_c_non_points_queue(ScanState &state, int window_left, int window_right, int update_pos);
 
 #endif

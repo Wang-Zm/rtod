@@ -1,172 +1,75 @@
-// time count part
-// semaphore
-#include <mutex>
+// High-precision wall-clock timer for per-phase profiling.
+// Usage: timer.startTimer(&timer.field); ... timer.stopTimer(&timer.field);
+// After all slides: timer.average(n); timer.showTimeNew();
+
 #include <sys/time.h>
 #include <iostream>
 
-class Timer{
-  public:
+class Timer {
+public:
+    double copy_new_points_h2d;
+    double copy_filtered_points_h2d; // points for casting rays or building the BVH tree
+    double copy_outlier_d2h;
 
-  double time[30];
-  std::mutex timeMutex[30];
-  double timebase;
+    double build_bvh;
+    double prepare_cell;
+    double detect_outlier;
 
-  double copy_new_points_h2d;
-  double copy_filtered_points_h2d; // points for casting rays or building the BVH tree
-  double copy_outlier_d2h;
+    double total;
 
-  double build_bvh;
-  double prepare_cell;
-  double detect_outlier;
-
-  double total;
-
-  Timer() {
-    for (int i = 0; i < 30; i++) {
-      time[i] = 0.0;
+    Timer() {
+        struct timeval t1;
+        gettimeofday(&t1, NULL);
+        timebase = t1.tv_sec * 1000.0 + t1.tv_usec / 1000.0;
+        clearNew();
     }
-    struct timeval t1;                           
-    gettimeofday(&t1, NULL);
-    timebase = t1.tv_sec * 1000.0 + t1.tv_usec / 1000.0;
-    clearNew();
-  }
 
-  // void clear() {
-  //   for (int i = 0; i < 30; i++) {
-  //     time[i] = 0.0;
-  //   }
-  // }
+    void clearNew() {
+        copy_new_points_h2d = 0;
+        copy_filtered_points_h2d = 0;
+        copy_outlier_d2h = 0;
+        prepare_cell = 0;
+        build_bvh = 0;
+        detect_outlier = 0;
+        total = 0;
+    }
 
-  // void clear(int timeId) {
-  //   time[timeId] = 0.0;
-  // }
+    void startTimer(double *t) {
+        struct timeval t1;
+        gettimeofday(&t1, NULL);
+        *t -= (t1.tv_sec * 1000.0 + t1.tv_usec / 1000.0) - timebase;
+    }
 
-  void clearNew() {
-    copy_new_points_h2d = 0;
-    copy_filtered_points_h2d = 0;
-    copy_outlier_d2h = 0;
-    prepare_cell = 0;
-    build_bvh = 0;
-    detect_outlier = 0;
-    total = 0;
-  }
-  
-  // void commonGetStartTime(int timeId) {
-  //   struct timeval t1;                           
-  //   gettimeofday(&t1, NULL);
-  //   lock_guard<mutex> lock(timeMutex[timeId]);
-  //   time[timeId] -= (t1.tv_sec * 1000.0 + t1.tv_usec / 1000.0) - timebase;
-  // }
+    void stopTimer(double *t) {
+        struct timeval t1;
+        gettimeofday(&t1, NULL);
+        *t += (t1.tv_sec * 1000.0 + t1.tv_usec / 1000.0) - timebase;
+    }
 
-  // void commonGetEndTime(int timeId) {
-  //   struct timeval t1;                           
-  //   gettimeofday(&t1, NULL);
-  //   lock_guard<mutex> lock(timeMutex[timeId]);
-  //   time[timeId] += (t1.tv_sec * 1000.0 + t1.tv_usec / 1000.0) - timebase;
-  // }
+    void average(int n) {
+        copy_new_points_h2d /= n;
+        copy_filtered_points_h2d /= n;
+        copy_outlier_d2h /= n;
+        prepare_cell /= n;
+        build_bvh /= n;
+        detect_outlier /= n;
+        total /= n;
+    }
 
-  void startTimer(double *t) {
-    struct timeval t1;                           
-    gettimeofday(&t1, NULL);
-    *t -= (t1.tv_sec * 1000.0 + t1.tv_usec / 1000.0) - timebase;
-  }
+    void showTimeNew() {
+        std::cout << std::endl;
+        std::cout << "###########   Time  ##########" << std::endl;
+        std::cout << "[Time] copy new points h2d: " << copy_new_points_h2d << " ms" << std::endl;
+        std::cout << "[Time] copy filtered points h2d: " << copy_filtered_points_h2d << " ms" << std::endl;
+        std::cout << "[Time] copy outlier d2h: " << copy_outlier_d2h << " ms" << std::endl;
+        std::cout << "[Time] prepare cell: " << prepare_cell << " ms" << std::endl;
+        std::cout << "[Time] build BVH: " << build_bvh << " ms" << std::endl;
+        std::cout << "[Time] detect outlier: " << detect_outlier << " ms" << std::endl;
+        std::cout << "[Time] total time for a slide: " << total << " ms" << std::endl;
+        std::cout << "##############################" << std::endl;
+        std::cout << std::endl;
+    }
 
-  void stopTimer(double *t) {
-    struct timeval t1;                           
-    gettimeofday(&t1, NULL);
-    *t += (t1.tv_sec * 1000.0 + t1.tv_usec / 1000.0) - timebase;
-  }
-
-  // void startTimer(struct timeval* t) {
-  //   gettimeofday(t, NULL);
-  // }
-
-  // void stopTimer(struct timeval* t, double* elapsed_time) {
-  //   struct timeval end;
-  //   gettimeofday(&end, NULL);
-  //   *elapsed_time += (end.tv_sec - t->tv_sec) * 1000.0 + (end.tv_usec - t->tv_usec) / 1000.0;
-  // }
-
-  void average(int n) {
-    copy_new_points_h2d /= n;
-    copy_filtered_points_h2d /= n;
-    copy_outlier_d2h /= n;
-    prepare_cell /= n;
-    build_bvh /= n;
-    detect_outlier /= n;
-    total /= n;
-  }
-
-  void showTimeNew() {
-    std::cout << std::endl;
-    std::cout << "###########   Time  ##########" << std::endl;
-    
-    std::cout << "[Time] copy new points h2d: " << copy_new_points_h2d << " ms" << std::endl;
-    std::cout << "[Time] copy filtered points h2d: " << copy_filtered_points_h2d << " ms" << std::endl;
-    std::cout << "[Time] copy outlier d2h: " << copy_outlier_d2h << " ms" << std::endl;
-
-    std::cout << "[Time] prepare cell: " << prepare_cell << " ms" << std::endl;
-    std::cout << "[Time] build BVH: " << build_bvh << " ms" << std::endl;
-    std::cout << "[Time] detect outlier: " << detect_outlier << " ms" << std::endl;
-    std::cout << "[Time] total time for a slide: " << total << " ms" << std::endl;
-    
-    std::cout << "##############################" << std::endl;
-    std::cout << std::endl;
-  }
-
-  // void showTime() {
-  //   cout << std::endl;
-  //   cout << "###########   Time  ##########" << std::endl;
-  //   cout << "[Time] build BVH: ";
-  //   cout << time[0] << " ms" << std::endl;
-
-  //   cout << "[Time] initialize cell: ";
-  //   cout << time[8] << " ms" << std::endl;
-
-  //   cout << "[Time] expired points: ";
-  //   cout << time[10] << " ms" << std::endl;
-  //   cout << "[Time] new points: ";
-  //   cout << time[11] << " ms" << std::endl;
-
-  //   cout << "[Time] prepare cell: ";
-  //   cout << time[9] << " ms" << std::endl;
-
-  //   cout << "[Time] copy points in new slide: ";
-  //   cout << time[4] << " ms" << std::endl;
-
-  //   cout << "[Time] copy points casting ray/rebuilding BVH: ";
-  //   cout << time[16] << " ms" << std::endl;
-
-  //   cout << "[Time] overall update: ";
-  //   cout << time[1] << " ms" << std::endl;
-
-  //   // cout << "[Time] rebuild gas: ";
-  //   // cout << time[22] << " ms" << std::endl;
-
-  //   // cout << "[Time] time of prepare cell and rebuild BVH: ";
-  //   // cout << time[14] << " ms" << std::endl;
-    
-  //   cout << "[Time] launch for sliding: ";
-  //   cout << time[5] << " ms" << std::endl;
-
-  //   cout << "[Time] transfer outliers back: ";
-  //   cout << time[6] << " ms" << std::endl;
-    
-  //   cout << "[Time] total time for a slide: ";
-  //   cout << time[7] << " ms" << std::endl;
-
-  //   // cout << "[Time] clarify points: ";
-  //   // cout << time[12] << " ms" << std::endl;
-
-  //   // cout << "[Time] memcpy c_non points to device: ";
-  //   // cout << time[13] << " ms" << std::endl;
-
-  //   cout << "##############################" << std::endl;
-  //   cout << std::endl;
-  // }
-
-  // void showTime(int tid, string description) {
-  //   cout << "[Time] " << description << ": " << time[tid] << std::endl;
-  // }
-
+private:
+    double timebase;
 };

@@ -8,7 +8,7 @@
 
 using namespace std;
 
-void result_d2h(ScanState &state, int outlier_num, int window_id, int unit_num) {
+void result_d2h(ScanState &state, int /*outlier_num*/, int /*window_id*/, int /*unit_num*/) {
     CUDA_CHECK(cudaMemcpy(
             state.h_ray_hits,
             state.params.ray_primitive_hits,
@@ -55,6 +55,8 @@ void calc_ray_hits(ScanState &state, unsigned *ray_hits) {
             hitNum_rayNum[ray_hits[i]] = 1;
         }
     }
+
+    if (hitNum_rayNum.empty()) return;  // guard: no rays were cast (e.g. ray_origin_num == 0)
 
     int min, max, median = -1;
     double avg;

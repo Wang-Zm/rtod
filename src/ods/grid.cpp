@@ -4,14 +4,13 @@
 #include <cuda_runtime.h>
 
 #include <cmath>
-#include <iostream>
 
 using namespace std;
 
 extern double3*  vertices;
 extern Timer     timer;
 
-int get_cell_id(ScanState &state, int i, bool add) {
+int get_cell_id(ScanState &state, int i) {
     int id = 0;
 #if DIMENSION == 1
     id = (vertices[i].x - state.min_value[0]) / state.cell_length;
@@ -34,7 +33,7 @@ void initialize_cell(ScanState &state) {
 void prepare_c_non_points_queue(ScanState &state, int window_left, int window_right, int update_pos) {
     // expired points
     for (int i = window_left; i < window_left + state.slide; i++) {
-        int cell_id = get_cell_id(state, i, false);
+        int cell_id = get_cell_id(state, i);
         FixQueue &fq = state.cell_queue[cell_id];
         fq.num--;
         if (fq.num == 0) {
@@ -43,7 +42,7 @@ void prepare_c_non_points_queue(ScanState &state, int window_left, int window_ri
     }
     // new points
     for (int i = window_right; i < window_right + state.slide; i++) {
-        int cell_id = get_cell_id(state, i, true);
+        int cell_id = get_cell_id(state, i);
         state.cell_queue[cell_id].enqueue(update_pos * state.slide + (i - window_right)); // record id
     }
 

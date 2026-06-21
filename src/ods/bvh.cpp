@@ -186,6 +186,10 @@ void rebuild_gas(ScanState &state, int update_pos) {
                 1, // Number of build inputs
                 &gas_buffer_sizes
                 ));
+    // invariant: the temp buffer allocated by make_gas (sized for window)
+    // must be large enough for this rebuild (sized for undetermined points)
+    assert(gas_buffer_sizes.tempSizeInBytes <= state.gas_buffer_sizes.tempSizeInBytes);
+    assert(gas_buffer_sizes.outputSizeInBytes <= state.gas_buffer_sizes.outputSizeInBytes);
     OPTIX_CHECK(optixAccelBuild(
                 state.context,
                 0, // CUDA stream

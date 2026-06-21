@@ -4,10 +4,7 @@
 #include <float.h>
 #include <vector_types.h>
 #include <optix_types.h>
-#include <unordered_set>
 #include <unordered_map>
-#include <list>
-#include <deque>
 #include "outlier_detection.h"
 
 class FixQueue {

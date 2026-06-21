@@ -57,7 +57,7 @@ void make_module(ScanState &state) {
     state.pipeline_compile_options.numPayloadValues = 3;
     state.pipeline_compile_options.numAttributeValues = 0;
 #ifdef DEBUG // Enables debug exceptions during optix launches. This may incur significant performance cost and should only be done during development.
-    pipeline_compile_options.exceptionFlags = OPTIX_EXCEPTION_FLAG_DEBUG | OPTIX_EXCEPTION_FLAG_TRACE_DEPTH | OPTIX_EXCEPTION_FLAG_STACK_OVERFLOW;
+    state.pipeline_compile_options.exceptionFlags = OPTIX_EXCEPTION_FLAG_DEBUG | OPTIX_EXCEPTION_FLAG_TRACE_DEPTH | OPTIX_EXCEPTION_FLAG_STACK_OVERFLOW;
 #else
     state.pipeline_compile_options.exceptionFlags = OPTIX_EXCEPTION_FLAG_NONE;
 #endif

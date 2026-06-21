@@ -17,12 +17,12 @@ void make_gas(ScanState &state) {
     start_gpu_mem(&make_gas_start);
 
     OptixAccelBuildOptions accel_options = {};
-#if UPDATE_GAS_TYPE == 0
-    accel_options.buildFlags = OPTIX_BUILD_FLAG_PREFER_FAST_TRACE;
-    accel_options.buildFlags |= OPTIX_BUILD_FLAG_ALLOW_UPDATE;
-#else
-    accel_options.buildFlags = OPTIX_BUILD_FLAG_PREFER_FAST_BUILD;
-#endif
+    if constexpr (UPDATE_GAS_TYPE == 0) {
+        accel_options.buildFlags = OPTIX_BUILD_FLAG_PREFER_FAST_TRACE;
+        accel_options.buildFlags |= OPTIX_BUILD_FLAG_ALLOW_UPDATE;
+    } else {
+        accel_options.buildFlags = OPTIX_BUILD_FLAG_PREFER_FAST_BUILD;
+    }
     accel_options.operation = OPTIX_BUILD_OPERATION_BUILD;
 
     size_t start_mem, used;
@@ -161,19 +161,19 @@ void rebuild_gas(ScanState &state, int update_pos) {
 
     // update aabb
     OptixAabb *d_aabb = reinterpret_cast<OptixAabb *>(state.d_aabb_ptr);
-#if OPTIMIZATION == 0 || OPTIMIZATION == 1
-    kGenAABB(state.params.points + update_pos * state.slide,
-             state.params.R,
-             state.slide,
-             d_aabb + update_pos * state.slide);
-    state.vertex_input.customPrimitiveArray.numPrimitives = state.window;
-#else
-    kGenAABB(state.params.ray_origin_list,
-             state.params.R,
-             state.params.ray_origin_num,
-             d_aabb);
-    state.vertex_input.customPrimitiveArray.numPrimitives = state.params.ray_origin_num;
-#endif
+    if constexpr (OPTIMIZATION <= 1) {
+        kGenAABB(state.params.points + update_pos * state.slide,
+                 state.params.R,
+                 state.slide,
+                 d_aabb + update_pos * state.slide);
+        state.vertex_input.customPrimitiveArray.numPrimitives = state.window;
+    } else {
+        kGenAABB(state.params.ray_origin_list,
+                 state.params.R,
+                 state.params.ray_origin_num,
+                 d_aabb);
+        state.vertex_input.customPrimitiveArray.numPrimitives = state.params.ray_origin_num;
+    }
 
     // recompute gas_buffer_sizes
     OptixAccelBufferSizes gas_buffer_sizes;

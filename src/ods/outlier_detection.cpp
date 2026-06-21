@@ -98,38 +98,20 @@ void read_data(std::string& outfile, ScanState &state) {
     }
     for (int rid = 0; rid < data_num; rid++) {
         getline(fin, line);
-#if DIMENSION == 1
-        sscanf(line.c_str(), "%lf", &vertices[rid].x);
-        vertices[rid].y = vertices[rid].z = 0;
-        if (state.max_value[0] < vertices[rid].x) {
-            state.max_value[0] = vertices[rid].x;
+        if constexpr (DIMENSION == 1) {
+            sscanf(line.c_str(), "%lf", &vertices[rid].x);
+            vertices[rid].y = vertices[rid].z = 0;
+            if (state.max_value[0] < vertices[rid].x) state.max_value[0] = vertices[rid].x;
+            if (state.min_value[0] > vertices[rid].x) state.min_value[0] = vertices[rid].x;
+        } else if constexpr (DIMENSION == 3) {
+            sscanf(line.c_str(), "%lf,%lf,%lf", &vertices[rid].x, &vertices[rid].y, &vertices[rid].z);
+            if (state.max_value[0] < vertices[rid].x) state.max_value[0] = vertices[rid].x;
+            if (state.min_value[0] > vertices[rid].x) state.min_value[0] = vertices[rid].x;
+            if (state.max_value[1] < vertices[rid].y) state.max_value[1] = vertices[rid].y;
+            if (state.min_value[1] > vertices[rid].y) state.min_value[1] = vertices[rid].y;
+            if (state.max_value[2] < vertices[rid].z) state.max_value[2] = vertices[rid].z;
+            if (state.min_value[2] > vertices[rid].z) state.min_value[2] = vertices[rid].z;
         }
-        if (state.min_value[0] > vertices[rid].x) {
-            state.min_value[0] = vertices[rid].x;
-        }
-#elif DIMENSION == 3
-        sscanf(line.c_str(), "%lf,%lf,%lf", &vertices[rid].x, &vertices[rid].y, &vertices[rid].z);
-        if (state.max_value[0] < vertices[rid].x) {
-            state.max_value[0] = vertices[rid].x;
-        }
-        if (state.min_value[0] > vertices[rid].x) {
-            state.min_value[0] = vertices[rid].x;
-        }
-
-        if (state.max_value[1] < vertices[rid].y) {
-            state.max_value[1] = vertices[rid].y;
-        }
-        if (state.min_value[1] > vertices[rid].y) {
-            state.min_value[1] = vertices[rid].y;
-        }
-
-        if (state.max_value[2] < vertices[rid].z) {
-            state.max_value[2] = vertices[rid].z;
-        }
-        if (state.min_value[2] > vertices[rid].z) {
-            state.min_value[2] = vertices[rid].z;
-        }
-#endif
     }
 
     for (int i = 0; i < DIMENSION; i++) {
@@ -146,59 +128,30 @@ void parse_args(ScanState &state, int argc, char *argv[]) {
         if (arg == "--help" || arg == "-h") {
             printUsageAndExit(argv[0]);
         } else if (arg == "--file" || arg == "-f") {
-            if (i < argc - 1) {
-                state.infile = argv[++i];
-            } else {
-                printUsageAndExit(argv[0]);
-            }
+            if (i < argc - 1) { state.infile = argv[++i]; }
+            else { printUsageAndExit(argv[0]); }
         } else if (arg == "--n") {
-            if (i < argc - 1) {
-                data_num = stoi(argv[++i]);
-            } else {
-                printUsageAndExit(argv[0]);
-            }
-        } else if(arg == "--window") {
-            if (i < argc - 1) {
-                state.window = stoi(argv[++i]);
-            } else {
-                printUsageAndExit(argv[0]);
-            }
-        } else if(arg == "--slide"){
-            if (i < argc - 1) {
-                state.slide = stoi(argv[++i]);
-            } else {
-                printUsageAndExit(argv[0]);
-            }
-        }
-        else if (arg == "--R") {
-            if (i < argc - 1) {
-                state.R = stod(argv[++i]);
-            } else {
-                printUsageAndExit(argv[0]);
-            }
-        }
-        else if (arg == "--K") {
-            if (i < argc - 1) {
-                state.K = stoi(argv[++i]);
-            } else {
-                printUsageAndExit(argv[0]);
-            }
-        }
-        else if (arg == "--start_copy_pos") {
-            if (i < argc - 1) {
-                state.start_copy_pos = stoi(argv[++i]);
-            } else {
-                printUsageAndExit(argv[0]);
-            }
-        }
-        else if (arg == "--launch_ray_num") {
-            if (i < argc - 1) {
-                state.launch_ray_num = stoi(argv[++i]);
-            } else {
-                printUsageAndExit(argv[0]);
-            }
-        }
-        else {
+            if (i < argc - 1) { data_num = stoi(argv[++i]); }
+            else { printUsageAndExit(argv[0]); }
+        } else if (arg == "--window") {
+            if (i < argc - 1) { state.window = stoi(argv[++i]); }
+            else { printUsageAndExit(argv[0]); }
+        } else if (arg == "--slide") {
+            if (i < argc - 1) { state.slide = stoi(argv[++i]); }
+            else { printUsageAndExit(argv[0]); }
+        } else if (arg == "--R") {
+            if (i < argc - 1) { state.R = stod(argv[++i]); }
+            else { printUsageAndExit(argv[0]); }
+        } else if (arg == "--K") {
+            if (i < argc - 1) { state.K = stoi(argv[++i]); }
+            else { printUsageAndExit(argv[0]); }
+        } else if (arg == "--start_copy_pos") {
+            if (i < argc - 1) { state.start_copy_pos = stoi(argv[++i]); }
+            else { printUsageAndExit(argv[0]); }
+        } else if (arg == "--launch_ray_num") {
+            if (i < argc - 1) { state.launch_ray_num = stoi(argv[++i]); }
+            else { printUsageAndExit(argv[0]); }
+        } else {
             std::cerr << "Unknown option '" << arg << "'\n";
             printUsageAndExit(argv[0]);
         }
@@ -222,36 +175,32 @@ void initialize_params(ScanState &state) {
 
     CUDA_CHECK(cudaMalloc(&state.params.outlier_num, sizeof(int)));
 
-#if OPTIMIZATION == 1 || OPTIMIZATION == 2
-    CUDA_CHECK(cudaMalloc(&state.params.ray_origin_list, state.window * sizeof(double3)));
-    state.h_ray_origin_list = (double3 *) malloc(state.window * sizeof(double3));
-#endif
+    if constexpr (OPTIMIZATION >= 1) {
+        CUDA_CHECK(cudaMalloc(&state.params.ray_origin_list, state.window * sizeof(double3)));
+        state.h_ray_origin_list = (double3 *) malloc(state.window * sizeof(double3));
+    }
 
-#if OPTIMIZATION == 2
-    state.h_ray_origin_idx  = (int *) malloc(state.window * sizeof(int));
-#endif
-
-#if OPTIMIZATION == 2
-    state.h_outlier_neightbor_num = (int *) malloc(state.window * sizeof(int));
-    CUDA_CHECK(cudaMalloc(&state.params.outlier_neighbor_num, state.window * sizeof(int)));
-#endif
+    if constexpr (OPTIMIZATION == 2) {
+        state.h_ray_origin_idx  = (int *) malloc(state.window * sizeof(int));
+        state.h_outlier_neightbor_num = (int *) malloc(state.window * sizeof(int));
+        CUDA_CHECK(cudaMalloc(&state.params.outlier_neighbor_num, state.window * sizeof(int)));
+    }
 
     state.h_outlier_list = (int *) malloc(state.window * sizeof(int));
-#if OPTIMIZATION == 0 || OPTIMIZATION == 1
-    CUDA_CHECK(cudaMalloc(&state.params.outlier_list, state.window * sizeof(int)));
-#endif
+    if constexpr (OPTIMIZATION <= 1) {
+        CUDA_CHECK(cudaMalloc(&state.params.outlier_list, state.window * sizeof(int)));
+    }
 
-#if OPTIMIZATION == 1 || OPTIMIZATION == 2
-    state.h_current_window = (double3 *) malloc(state.window * sizeof(double3));
-#endif
+    if constexpr (OPTIMIZATION >= 1) {
+        state.h_current_window = (double3 *) malloc(state.window * sizeof(double3));
+    }
 
-#if DEBUG_INFO == 1
-    CUDA_CHECK(cudaMalloc(&state.params.ray_primitive_hits, state.window * sizeof(unsigned)));
-    CUDA_CHECK(cudaMalloc(&state.params.ray_intersections, state.window * sizeof(unsigned)));
-
-    state.h_ray_hits = (unsigned *) malloc(state.window * sizeof(unsigned));
-    state.h_ray_intersections = (unsigned *) malloc(state.window * sizeof(unsigned));
-#endif
+    if constexpr (DEBUG_INFO == 1) {
+        CUDA_CHECK(cudaMalloc(&state.params.ray_primitive_hits, state.window * sizeof(unsigned)));
+        CUDA_CHECK(cudaMalloc(&state.params.ray_intersections, state.window * sizeof(unsigned)));
+        state.h_ray_hits = (unsigned *) malloc(state.window * sizeof(unsigned));
+        state.h_ray_intersections = (unsigned *) malloc(state.window * sizeof(unsigned));
+    }
 
     CUDA_CHECK(cudaMalloc(reinterpret_cast<void **>(&state.d_params), sizeof(Params)));
 
@@ -273,27 +222,20 @@ void initialize_params(ScanState &state) {
 
 void launch(ScanState &state) {
     assert(state.params.ray_origin_num <= state.window);
-    if (state.params.ray_origin_num == 0) {
-        return;
-    }
+    if (state.params.ray_origin_num == 0) return;
 
     CUDA_CHECK(cudaMemcpy(
         reinterpret_cast<void *>(state.d_params),
-        &state.params,
-        sizeof(Params),
-        cudaMemcpyHostToDevice));
+        &state.params, sizeof(Params), cudaMemcpyHostToDevice));
 
-#if OPTIMIZATION == 0
-    if (state.launch_ray_num != 0) {
-        OPTIX_CHECK(optixLaunch(state.pipeline, 0, state.d_params, sizeof(Params), &state.sbt, state.launch_ray_num, 1, 1));
+    if constexpr (OPTIMIZATION == 0) {
+        int ray_count = (state.launch_ray_num != 0) ? state.launch_ray_num : state.window;
+        OPTIX_CHECK(optixLaunch(state.pipeline, 0, state.d_params, sizeof(Params), &state.sbt, ray_count, 1, 1));
+    } else if constexpr (OPTIMIZATION == 1) {
+        OPTIX_CHECK(optixLaunch(state.pipeline, 0, state.d_params, sizeof(Params), &state.sbt, state.params.ray_origin_num, 1, 1));
     } else {
         OPTIX_CHECK(optixLaunch(state.pipeline, 0, state.d_params, sizeof(Params), &state.sbt, state.window, 1, 1));
     }
-#elif OPTIMIZATION == 1
-    OPTIX_CHECK(optixLaunch(state.pipeline, 0, state.d_params, sizeof(Params), &state.sbt, state.params.ray_origin_num, 1, 1));
-#else
-    OPTIX_CHECK(optixLaunch(state.pipeline, 0, state.d_params, sizeof(Params), &state.sbt, state.window, 1, 1));
-#endif
     CUDA_SYNC_CHECK();
 }
 
@@ -304,17 +246,18 @@ void cleanup(ScanState &state) {
     // free host memory
     vertices -= state.start_copy_pos * state.slide;
     free(vertices);
-#if OPTIMIZATION == 1 || OPTIMIZATION == 2
-    free(state.h_current_window);
-    free(state.h_ray_origin_list);
-#endif
+
+    if constexpr (OPTIMIZATION >= 1) {
+        free(state.h_current_window);
+        free(state.h_ray_origin_list);
+    }
 
     free(state.h_outlier_list);
 
-#if OPTIMIZATION == 2
-    free(state.h_ray_origin_idx);
-    free(state.h_outlier_neightbor_num);
-#endif
+    if constexpr (OPTIMIZATION == 2) {
+        free(state.h_ray_origin_idx);
+        free(state.h_outlier_neightbor_num);
+    }
 
     // free device memory
     CUDA_CHECK(cudaFree(reinterpret_cast<void *>(state.sbt.raygenRecord)));
@@ -329,24 +272,23 @@ void cleanup(ScanState &state) {
     OPTIX_CHECK(optixProgramGroupDestroy(state.miss_prog_group));
     OPTIX_CHECK(optixProgramGroupDestroy(state.raygen_prog_group));
     OPTIX_CHECK(optixModuleDestroy(state.module));
-
     OPTIX_CHECK(optixDeviceContextDestroy(state.context));
 
     CUDA_CHECK(cudaFree(state.params.outlier_num));
-#if OPTIMIZATION == 0 || OPTIMIZATION == 1
-    CUDA_CHECK(cudaFree(state.params.outlier_list));
-#endif
+    if constexpr (OPTIMIZATION <= 1) {
+        CUDA_CHECK(cudaFree(state.params.outlier_list));
+    }
     CUDA_CHECK(cudaFree(state.params.points));
-#if OPTIMIZATION == 2
-    CUDA_CHECK(cudaFree(state.params.outlier_neighbor_num));
-#endif
+    if constexpr (OPTIMIZATION == 2) {
+        CUDA_CHECK(cudaFree(state.params.outlier_neighbor_num));
+    }
 
-#if DEBUG_INFO == 1
-    CUDA_CHECK(cudaFree(state.params.ray_primitive_hits));
-    CUDA_CHECK(cudaFree(state.params.ray_intersections));
-    free(state.h_ray_hits);
-    free(state.h_ray_intersections);
-#endif
+    if constexpr (DEBUG_INFO == 1) {
+        CUDA_CHECK(cudaFree(state.params.ray_primitive_hits));
+        CUDA_CHECK(cudaFree(state.params.ray_intersections));
+        free(state.h_ray_hits);
+        free(state.h_ray_intersections);
+    }
 
     CUDA_CHECK(cudaFree(reinterpret_cast<void *>(state.d_params)));
 }
@@ -355,42 +297,33 @@ void cleanup(ScanState &state) {
 // ── runtime validation ───────────────────────────────────────────────────
 
 void validate_params(ScanState &state) {
-    // These are logic errors — if they fire, fix the CLI args or CMake flags.
     if (state.window <= 0) {
-        cerr << "[FATAL] window must be > 0, got " << state.window << endl;
-        exit(1);
+        cerr << "[FATAL] window must be > 0, got " << state.window << endl; exit(1);
     }
     if (state.slide <= 0) {
-        cerr << "[FATAL] slide must be > 0, got " << state.slide << endl;
-        exit(1);
+        cerr << "[FATAL] slide must be > 0, got " << state.slide << endl; exit(1);
     }
     if (state.R <= 0) {
-        cerr << "[FATAL] R must be > 0, got " << state.R << endl;
-        exit(1);
+        cerr << "[FATAL] R must be > 0, got " << state.R << endl; exit(1);
     }
     if (state.K <= 0) {
-        cerr << "[FATAL] K must be > 0, got " << state.K << endl;
-        exit(1);
+        cerr << "[FATAL] K must be > 0, got " << state.K << endl; exit(1);
     }
     if (data_num < state.window) {
-        cerr << "[FATAL] data_num (" << data_num << ") must be >= window (" << state.window << ")" << endl;
-        exit(1);
+        cerr << "[FATAL] data_num (" << data_num << ") must be >= window (" << state.window << ")" << endl; exit(1);
     }
     if (state.window % state.slide != 0) {
         cerr << "[FATAL] window (" << state.window << ") must be divisible by slide ("
-             << state.slide << "), otherwise ring-buffer indexing breaks." << endl;
-        exit(1);
+             << state.slide << "), otherwise ring-buffer indexing breaks." << endl; exit(1);
     }
     if (state.K > MK) {
         cerr << "[FATAL] K (" << state.K << ") must be <= MK (" << MK
              << "). FixQueue internally uses arr[MK], so overflow would occur. "
-                "Rebuild with -D MK=" << state.K << endl;
-        exit(1);
+                "Rebuild with -D MK=" << state.K << endl; exit(1);
     }
     if (state.launch_ray_num > state.window) {
         cerr << "[FATAL] launch_ray_num (" << state.launch_ray_num
-             << ") must be <= window (" << state.window << ")" << endl;
-        exit(1);
+             << ") must be <= window (" << state.window << ")" << endl; exit(1);
     }
     std::cout << "[Invariant] All runtime parameter checks passed." << std::endl;
 }
@@ -416,20 +349,20 @@ void log_common_info(ScanState &state) {
 
 void detect_outlier(ScanState &state, bool warmup) {
     CUDA_CHECK(cudaMemcpy(
-        state.params.points,
-        vertices,
-        state.window * sizeof(double3),
-        cudaMemcpyHostToDevice));
-#if OPTIMIZATION == 0 || OPTIMIZATION == 1
-    kGenAABB(state.params.points, state.R, state.window, reinterpret_cast<OptixAabb*>(state.d_aabb_ptr));
-#endif
-#if OPTIMIZATION == 1 || OPTIMIZATION == 2
-    memcpy(state.h_current_window, vertices, state.window * sizeof(double3));
-    for (int i = 0; i < state.window; i++) {
-        int cell_id = get_cell_id(state, i);
-        state.cell_queue[cell_id].enqueue(i);
+        state.params.points, vertices,
+        state.window * sizeof(double3), cudaMemcpyHostToDevice));
+
+    if constexpr (OPTIMIZATION <= 1) {
+        kGenAABB(state.params.points, state.R, state.window,
+                 reinterpret_cast<OptixAabb*>(state.d_aabb_ptr));
     }
-#endif
+
+    if constexpr (OPTIMIZATION >= 1) {
+        memcpy(state.h_current_window, vertices, state.window * sizeof(double3));
+        for (int i = 0; i < state.window; i++) {
+            state.cell_queue[get_cell_id(state, i)].enqueue(i);
+        }
+    }
 
     int remaining_data_num  = data_num - state.window;
     int unit_num            = state.window / state.slide;
@@ -443,11 +376,11 @@ void detect_outlier(ScanState &state, bool warmup) {
     while (remaining_data_num >= state.slide && slide_num < 10000) {
         timer.start(TIMER_total);
         CUDA_CHECK(cudaMemset(state.params.outlier_num, 0, sizeof(int)));
-#if OPTIMIZATION == 2
-        CUDA_CHECK(cudaMemset(state.params.outlier_neighbor_num, 0, state.window * sizeof(int)));
-#endif
+        if constexpr (OPTIMIZATION == 2) {
+            CUDA_CHECK(cudaMemset(state.params.outlier_neighbor_num, 0, state.window * sizeof(int)));
+        }
+
         timer.start(TIMER_copy_new_points_h2d);
-        // transfer new slide to the device
         CUDA_CHECK(cudaMemcpy(
             state.params.points + update_pos * state.slide,
             state.new_slide,
@@ -455,23 +388,21 @@ void detect_outlier(ScanState &state, bool warmup) {
             cudaMemcpyHostToDevice));
         timer.stop(TIMER_copy_new_points_h2d);
 
-#if OPTIMIZATION == 1 || OPTIMIZATION == 2
-        // prepare current window in host
-        memcpy(state.h_current_window + update_pos * state.slide,
-            state.new_slide,
-            state.slide * sizeof(double3));
-        timer.start(TIMER_prepare_cell);
-        prepare_c_non_points_queue(state, window_left, window_right, update_pos);
-        assert(state.params.ray_origin_num <= state.window);
-        timer.stop(TIMER_prepare_cell);
-#endif
+        if constexpr (OPTIMIZATION >= 1) {
+            memcpy(state.h_current_window + update_pos * state.slide,
+                   state.new_slide, state.slide * sizeof(double3));
+            timer.start(TIMER_prepare_cell);
+            prepare_c_non_points_queue(state, window_left, window_right, update_pos);
+            assert(state.params.ray_origin_num <= state.window);
+            timer.stop(TIMER_prepare_cell);
+        }
 
         timer.start(TIMER_build_bvh);
-#if UPDATE_GAS_TYPE == 0
-        update_gas(state, update_pos);
-#else
-        rebuild_gas(state, update_pos);
-#endif
+        if constexpr (UPDATE_GAS_TYPE == 0) {
+            update_gas(state, update_pos);
+        } else {
+            rebuild_gas(state, update_pos);
+        }
         CUDA_SYNC_CHECK();
         timer.stop(TIMER_build_bvh);
 
@@ -482,21 +413,21 @@ void detect_outlier(ScanState &state, bool warmup) {
         // * D2H
         timer.start(TIMER_copy_outlier_d2h);
         int outlier_num = 0;
-#if OPTIMIZATION == 0 || OPTIMIZATION == 1
-        CUDA_CHECK(cudaMemcpy(&outlier_num, state.params.outlier_num, sizeof(int), cudaMemcpyDeviceToHost));
-        CUDA_CHECK(cudaMemcpy(state.h_outlier_list, state.params.outlier_list, outlier_num * sizeof(int), cudaMemcpyDeviceToHost));
-#else
-        CUDA_CHECK(cudaMemcpy(
-            state.h_outlier_neightbor_num,
-            state.params.outlier_neighbor_num,
-            state.params.ray_origin_num * sizeof(int),
-            cudaMemcpyDeviceToHost));
-        for (int i = 0; i < state.params.ray_origin_num; i++) {
-            if (state.h_outlier_neightbor_num[i] <= state.K) {
-                state.h_outlier_list[outlier_num++] = state.h_ray_origin_idx[i];
+        if constexpr (OPTIMIZATION <= 1) {
+            CUDA_CHECK(cudaMemcpy(&outlier_num, state.params.outlier_num, sizeof(int), cudaMemcpyDeviceToHost));
+            CUDA_CHECK(cudaMemcpy(state.h_outlier_list, state.params.outlier_list, outlier_num * sizeof(int), cudaMemcpyDeviceToHost));
+        } else {
+            CUDA_CHECK(cudaMemcpy(
+                state.h_outlier_neightbor_num,
+                state.params.outlier_neighbor_num,
+                state.params.ray_origin_num * sizeof(int),
+                cudaMemcpyDeviceToHost));
+            for (int i = 0; i < state.params.ray_origin_num; i++) {
+                if (state.h_outlier_neightbor_num[i] <= state.K) {
+                    state.h_outlier_list[outlier_num++] = state.h_ray_origin_idx[i];
+                }
             }
         }
-#endif
         assert(outlier_num <= state.window);
         timer.stop(TIMER_copy_outlier_d2h);
 
@@ -506,18 +437,15 @@ void detect_outlier(ScanState &state, bool warmup) {
         update_pos           = (update_pos + 1) % unit_num;
         window_left         += state.slide;
         window_right        += state.slide;
-
         timer.stop(TIMER_total);
 
-#if DEBUG_INFO == 1
-        if (!warmup) {
-            cout << "At window " << slide_num << ", # outliers: " << outlier_num << endl;
-            result_d2h(state, outlier_num, slide_num, unit_num);
-            calc_total_hit_intersection_each_window(state);
-            // calc_ray_hits(state, state.h_ray_hits);
-            // check_outlier(state.h_outlier_list, outlier_num, vertices + slide_num * state.slide, slide_num, unit_num, state);
+        if constexpr (DEBUG_INFO == 1) {
+            if (!warmup) {
+                cout << "At window " << slide_num << ", # outliers: " << outlier_num << endl;
+                result_d2h(state, outlier_num, slide_num, unit_num);
+                calc_total_hit_intersection_each_window(state);
+            }
         }
-#endif
     }
 
     if (warmup) {
@@ -544,19 +472,19 @@ int main(int argc, char *argv[])
     start_gpu_mem(&start_gpu_memory);
 
     data_h2d(state);
-    make_gas(state);                    // Acceleration handling
+    make_gas(state);
     make_module(state);
     make_program_groups(state);
-    make_pipeline(state);               // Link pipeline; Occupy most cpu memory
+    make_pipeline(state);
     make_sbt(state);
 
     size_t init_cpu_mem = get_cpu_memory_usage();
     initialize_params(state);
     log_common_info(state);
 
-#if OPTIMIZATION == 1 || OPTIMIZATION == 2
-    initialize_cell(state);
-#endif
+    if constexpr (OPTIMIZATION >= 1) {
+        initialize_cell(state);
+    }
     for (int i = 0; i < 10; i++) {
         detect_outlier(state, true);    // warmup
     }
@@ -574,18 +502,18 @@ int main(int argc, char *argv[])
     stop_gpu_mem(&start_gpu_memory, &rtod_used_gpu_memory);
     std::cout << "[Mem] Device memory used for data(MB): " << 1.0 * rtod_used_gpu_memory / (1 << 20) << std::endl;
 
-#if OPTIMIZATION == 1
-    std::cout << "Ray / slide: " << state.total_cast_rays / slide_num << std::endl;
-#elif OPTIMIZATION == 2
-    std::cout << "BVH Node / slide: " << state.total_cast_rays / slide_num << std::endl;
-#endif
+    if constexpr (OPTIMIZATION == 1) {
+        std::cout << "Ray / slide: " << state.total_cast_rays / slide_num << std::endl;
+    } else if constexpr (OPTIMIZATION == 2) {
+        std::cout << "BVH Node / slide: " << state.total_cast_rays / slide_num << std::endl;
+    }
 
-#if DEBUG_INFO == 1
-    std::cout << "Hit / slide: " << state.total_hit / slide_num << std::endl;
-    std::cout << "Intersection test / slide: " << state.total_is_test / slide_num << std::endl;
-    std::cout << "Intersection test per ray on average: " << state.total_is_test_per_ray / slide_num << std::endl;
-    std::cout << "Hit per ray on average: " << state.total_hit_per_ray / slide_num << endl;
-#endif
+    if constexpr (DEBUG_INFO == 1) {
+        std::cout << "Hit / slide: " << state.total_hit / slide_num << std::endl;
+        std::cout << "Intersection test / slide: " << state.total_is_test / slide_num << std::endl;
+        std::cout << "Intersection test per ray on average: " << state.total_is_test_per_ray / slide_num << std::endl;
+        std::cout << "Hit per ray on average: " << state.total_hit_per_ray / slide_num << endl;
+    }
     cleanup(state);
     return 0;
 }

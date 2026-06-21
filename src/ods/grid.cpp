@@ -12,14 +12,14 @@ extern Timer     timer;
 
 int get_cell_id(ScanState &state, int i) {
     int id = 0;
-#if DIMENSION == 1
-    id = (vertices[i].x - state.min_value[0]) / state.cell_length;
-#elif DIMENSION == 3
-    int dim_id_x = (vertices[i].x - state.min_value[0]) / state.cell_length;
-    int dim_id_y = (vertices[i].y - state.min_value[1]) / state.cell_length;
-    int dim_id_z = (vertices[i].z - state.min_value[2]) / state.cell_length;
-    id = dim_id_x * state.cell_count[1] * state.cell_count[2] + dim_id_y * state.cell_count[2] + dim_id_z;
-#endif
+    if constexpr (DIMENSION == 1) {
+        id = (vertices[i].x - state.min_value[0]) / state.cell_length;
+    } else if constexpr (DIMENSION == 3) {
+        int dim_id_x = (vertices[i].x - state.min_value[0]) / state.cell_length;
+        int dim_id_y = (vertices[i].y - state.min_value[1]) / state.cell_length;
+        int dim_id_z = (vertices[i].z - state.min_value[2]) / state.cell_length;
+        id = dim_id_x * state.cell_count[1] * state.cell_count[2] + dim_id_y * state.cell_count[2] + dim_id_z;
+    }
     return id;
 }
 
@@ -62,11 +62,11 @@ void prepare_c_non_points_queue(ScanState &state, int window_left, int window_ri
     int device_pos = 0;
     for (int i = 0; i < undetermined_cell_num; i++) {
         FixQueue &q = state.cell_queue[state.undetermined_cell_list[i]];
-#if OPTIMIZATION == 1
-        q.copy(state.h_ray_origin_list + device_pos, state.h_current_window);
-#elif OPTIMIZATION == 2
-        q.copy(state.h_ray_origin_list + device_pos, state.h_ray_origin_idx + device_pos, state.h_current_window);
-#endif
+        if constexpr (OPTIMIZATION == 1) {
+            q.copy(state.h_ray_origin_list + device_pos, state.h_current_window);
+        } else if constexpr (OPTIMIZATION == 2) {
+            q.copy(state.h_ray_origin_list + device_pos, state.h_ray_origin_idx + device_pos, state.h_current_window);
+        }
         device_pos += q.num;
     }
 

@@ -84,7 +84,7 @@ cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 # the name of the VS solution file.
 project(OptiX-Samples)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(CMAKE_CXX_EXTENSIONS OFF)
 

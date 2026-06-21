@@ -31,8 +31,8 @@
 // These guards prevent misconfiguration at build time.
 // If you hit one of these, fix the CMake flags (-D...) and reconfigure.
 
-#if DIMENSION != 1 && DIMENSION != 3
-#error "DIMENSION must be 1 or 3"
+#if DIMENSION != 1 && DIMENSION != 2 && DIMENSION != 3
+#error "DIMENSION must be 1, 2, or 3"
 #endif
 
 #if OPTIMIZATION < 0 || OPTIMIZATION > 2

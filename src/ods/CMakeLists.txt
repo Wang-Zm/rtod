@@ -35,8 +35,8 @@ add_definitions(-DUPDATE_GAS_TYPE=${UPDATE_GAS_TYPE})
 add_definitions(-DOPTIMIZATION=${OPTIMIZATION})
 
 # Harness Gate A: validate compile-time parameters at CMake level
-if(NOT DIMENSION MATCHES "^(1|3)$")
-  message(FATAL_ERROR "DIMENSION must be 1 or 3, got '${DIMENSION}'")
+if(NOT DIMENSION MATCHES "^(1|2|3)$")
+  message(FATAL_ERROR "DIMENSION must be 1, 2, or 3, got '${DIMENSION}'")
 endif()
 if(NOT OPTIMIZATION MATCHES "^(0|1|2)$")
   message(FATAL_ERROR "OPTIMIZATION must be 0, 1, or 2, got '${OPTIMIZATION}'")
